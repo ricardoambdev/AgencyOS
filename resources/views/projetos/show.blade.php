@@ -31,7 +31,7 @@
                         </div>
                         <form method="POST" action="{{ route('tasks.update', $task) }}">@csrf @method('PATCH')
                             <select name="status" onchange="this.form.submit()" class="text-xs rounded border border-gray-300 px-2 py-1">
-                                @foreach(['todo'=>'A fazer','doing'=>'Em andamento','done'=>'Concluída'] as $v=>$l)
+                                @foreach(\App\Core\Models\WorkflowState::resolve(\App\Domains\Projeto\Models\Task::class) as $v => $l)
                                     <option value="{{ $v }}" {{ $task->status == $v ? 'selected' : '' }}>{{ $l }}</option>
                                 @endforeach
                             </select>
@@ -45,6 +45,27 @@
             <div class="bg-white shadow rounded-lg p-6">
                 @include('partials.comments', ['model' => $projeto])
                 @include('partials.entity-activity', ['model' => $projeto])
+            </div>
+
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="font-semibold text-gray-700 mb-3">Checklist</h3>
+                @if($checklist->isEmpty())
+                    <p class="text-sm text-gray-400">Nenhum item de checklist.</p>
+                @else
+                    <ul class="space-y-1">
+                        @foreach($checklist as $item)
+                        <li class="flex items-center gap-2 text-sm">
+                            <form method="POST" action="{{ route('projetos.checklist.toggle', $item) }}" class="inline">
+                                @csrf
+                                <button type="submit" class="mr-1 {{ $item->done ? 'text-green-600' : 'text-gray-300' }}" title="Alternar">
+                                    {{ $item->done ? '☑' : '☐' }}
+                                </button>
+                            </form>
+                            <span class="{{ $item->done ? 'line-through text-gray-400' : 'text-gray-700' }}">{{ $item->label }}</span>
+                        </li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         </div>
         <div class="space-y-6">

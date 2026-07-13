@@ -10,9 +10,15 @@
         <input type="text" name="name" value="{{ old('name', $projeto->name ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required></div>
     <div class="grid grid-cols-2 gap-4">
         <div><label class="block text-sm font-medium text-gray-700">Status</label>
+            @php
+                $projStatuses = \App\Core\Models\WorkflowState::resolve(\App\Domains\Projeto\Models\Projeto::class);
+                $projMeta = \App\Core\Models\WorkflowState::meta(\App\Domains\Projeto\Models\Projeto::class);
+                $initial = collect($projMeta)->filter(fn ($m) => $m['is_initial'])->keys()->first() ?? array_key_first($projStatuses);
+                $current = old('status', $projeto->status ?? $initial);
+            @endphp
             <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach(['briefing'=>'Briefing','planejamento'=>'Planejamento','producao'=>'Produção','revisao'=>'Revisão','cliente'=>'Com Cliente','finalizado'=>'Finalizado'] as $v=>$l)
-                    <option value="{{ $v }}" {{ ($projeto->status ?? 'briefing') == $v ? 'selected' : '' }}>{{ $l }}</option>
+                @foreach($projStatuses as $v => $l)
+                    <option value="{{ $v }}" {{ $current == $v ? 'selected' : '' }}>{{ $l }}</option>
                 @endforeach
             </select></div>
         <div><label class="block text-sm font-medium text-gray-700">Responsável</label>

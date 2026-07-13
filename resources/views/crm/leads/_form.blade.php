@@ -25,10 +25,17 @@
     </div>
     <div class="grid grid-cols-3 gap-4">
         <div>
+            @php
+                $leadStatuses = \App\Core\Models\WorkflowState::resolve(\App\Domains\Crm\Models\Lead::class);
+                $leadMeta = \App\Core\Models\WorkflowState::meta(\App\Domains\Crm\Models\Lead::class);
+                $initial = collect($leadMeta)->filter(fn ($m) => $m['is_initial'])->keys()->first()
+                    ?? array_key_first($leadStatuses);
+                $current = old('status', $lead->status ?? $initial);
+            @endphp
             <label class="block text-sm font-medium text-gray-700">Status</label>
             <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach(['new'=>'Novo','contacted'=>'Contatado','qualified'=>'Qualificado','proposal'=>'Proposta','won'=>'Ganho','lost'=>'Perdido'] as $v=>$l)
-                    <option value="{{ $v }}" {{ ($lead->status ?? 'new') == $v ? 'selected' : '' }}>{{ $l }}</option>
+                @foreach($leadStatuses as $v => $l)
+                    <option value="{{ $v }}" {{ $current == $v ? 'selected' : '' }}>{{ $l }}</option>
                 @endforeach
             </select>
         </div>

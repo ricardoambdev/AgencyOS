@@ -36,4 +36,22 @@
             <button type="button" @click="rows.push({title:'', description:'', priority:'', estimated_hours:0})" class="text-sm text-indigo-600">+ Adicionar tarefa</button>
         </div>
     </div>
+
+    <div class="border-t border-gray-200 pt-4">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3">Checklist do Template</h3>
+        @php
+            $checklistRows = $template && is_array($template->checklist)
+                ? array_map(fn($c) => ['label' => $c], $template->checklist)
+                : [];
+        @endphp
+        <div class="space-y-2" x-data="{ items: @json($checklistRows) }">
+            <template x-for="(item, i) in items" :key="i">
+                <div class="flex items-center gap-2 border border-gray-100 p-2 rounded">
+                    <input type="text" x-model="item.label" :name="'checklist['+i+']'" class="mt-1 w-full rounded-md border border-gray-300 px-2 py-1 text-sm" placeholder="Item do checklist">
+                    <button type="button" @click="items.splice(i, 1)" class="text-red-500 text-sm">x</button>
+                </div>
+            </template>
+            <button type="button" @click="items.push({label:''})" class="text-sm text-indigo-600">+ Adicionar item</button>
+        </div>
+    </div>
 </div>

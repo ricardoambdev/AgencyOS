@@ -107,4 +107,57 @@ class AuthTest extends TestCase
 
         $this->assertNotNull($user->fresh()->email_verified_at);
     }
+
+    public function test_workspace_template_seeds_segment_states_and_menu(): void
+    {
+        $this->post(route('register'), [
+            'name' => 'Dono Clinica',
+            'email' => 'clinica@example.com',
+            'password' => 'secret123',
+            'password_confirmation' => 'secret123',
+            'company' => 'Clinica Saúde',
+            'workspace_template' => 'clinic',
+        ])->assertRedirect(route('verification.notice'));
+
+        $company = \App\Domains\Company\Models\Company::where('name', 'Clinica Saúde')->first();
+
+        $this->assertDatabaseHas('workflow_states', [
+            'company_id' => $company->id,
+            'entity_type' => \App\Domains\Crm\Models\Lead::class,
+            'slug' => 'attended',
+            'name' => 'Atendido',
+        ]);
+
+        $this->assertDatabaseHas('menu_items', [
+            'company_id' => $company->id,
+            'label' => 'Pacientes',
+        ]);
+
+        $resolved = \App\Core\Models\WorkflowState::resolve(\App\Domains\Crm\Models\Lead::class, $company->id);
+        $this->assertArrayHasKey('attended', $resolved);
+        $this->assertArrayNotHasKey('won', $resolved);
+    }
+
+    public function test_can_import_and_export_leads_csv(): void
+    {
+        $user = $this->ownerUser();
+
+        $csv = "nome,email,empresa,telefone,valor,status\n";
+        $csv .= "Importado Um,um@example.com,Empresa A,119999,1500,new\n";
+        $csv .= "Importado Dois,dois@example.com,Empresa B,119888,2500,contact\n";
+
+        $this->actingAs($user)
+            ->post(route('leads.import.store'), [
+                'file' => \Illuminate\Http\UploadedFile::fake()->createWithContent('leads.csv', $csv, 'text/csv'),
+            ])
+            ->assertRedirect(route('leads.index'));
+
+        $this->assertDatabaseHas('leads', ['email' => 'um@example.com', 'name' => 'Importado Um']);
+        $this->assertDatabaseHas('leads', ['email' => 'dois@example.com', 'name' => 'Importado Dois']);
+
+        $this->actingAs($user)
+            ->get(route('leads.export'))
+            ->assertOk()
+            ->assertHeader('content-type', 'text/csv; charset=utf-8');
+    }
 }

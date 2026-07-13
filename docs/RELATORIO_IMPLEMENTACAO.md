@@ -98,19 +98,23 @@ resources/views/        # Blade por domínio + partials reutilizáveis
 - **Verificação de e-mail:** `User` implementa `MustVerifyEmail`; `AuthController` envia notificação no registro e expõe `verification.verify` (rota assinada), `verification.notice`, `verification.send`; banner no dashboard.
 - **Filas database:** `BuildReportExport` (`ShouldQueue`, fila `exports`). Disparado em `ReportController::export`. Para ativar em produção, defina `QUEUE_CONNECTION=database` e rode `php artisan queue:work`.
 
-### 3.3 Pendências / Roadmap (checklist de implementação)
-> Itens do `Instructions.md` ainda não implementados (ou parcialmente). Cada um tem o ponto de partida mapeado.
+### 3.3 Checklist de implementação (gaps do Instructions.md)
 
-1. **[ ] Status de workflow configuráveis por entidade via UI**
-   - Hoje os estados vêm de `EntityCatalog`. Criar tabela `workflow_states` (company_id, entity_type, name, color, order, is_initial, is_final) e `workflow_transitions`; substituir o catálogo estático por leitura do banco nas telas de show/kanban.
-2. **[ ] Checklists em templates de projeto**
-   - Estender `ProjectTemplate` com `template_checklists` (name, items JSON) e criar os itens ao aplicar o template (`ProjectTemplateController::storeApply`).
-3. **[ ] Menus configuráveis por workspace**
-   - Tabela `menu_items` (company_id, label, route, icon, order, parent_id); renderizar o menu lateral a partir dela em `layouts/app.blade.php`.
-4. **[ ] Templates de workspace por segmento**
-   - Hoje only `agency`. Adicionar `workspace_template` variants (`clinic`, `ecommerce`, `saas`, etc.) em `EntityCatalog` + seeders por segmento.
-5. **[ ] Engines de import/export (NFe/XML) e integrações fiscais**
-   - `Core/Engines/ImportEngine` + `ExportEngine`; mapeamento de fornecedores/produtos; webhook de retorno da contabilidade.
+> Itens do `Instructions.md` que estavam pendentes. Concluídos nesta entrega: **#1 a #5**. Roadmap (ainda não implementados): **#6 a #9**.
+
+1. **[x] Status de workflow configuráveis por entidade via UI**
+   - `WorkflowState` (tabela `workflow_states`: company_id, entity_type, slug, name, color, order, is_initial, is_final).
+   - Resolver `WorkflowState::resolve($entityType)`/`meta()` com fallback para `EntityCatalog`.
+   - UI em `config/workflow-states` (CRUD por entidade). Lead e Projeto (e tarefas) já consomem os estados configuráveis; badge de cor em `partials/status-badge`.
+2. **[x] Checklists em templates de projeto**
+   - `ProjectTemplate.checklist` (JSON) + `checklist_items` (company_id, project_id, label, done, order).
+   - Ao aplicar o template (`ProjectTemplateController::storeApply`), os itens viram `ChecklistItem` do projeto; toggle em `projetos.checklist.toggle`.
+3. **[x] Menus configuráveis por workspace**
+   - `MenuItem` (tabela `menu_items`). UI em `config/menu`. O menu lateral em `layouts/app.blade.php` é renderizado dinamicamente (`MenuItem::forCompany()`), com fallback para o menu padrão.
+4. **[x] Templates de workspace por segmento**
+   - `WorkspaceStarter` com segmentos `agency|clinic|ecommerce|saas`; selecionado no registro e semea estados de workflow + menu por segmento.
+5. **[x] Engines de import/export**
+   - `ImportExportEngine` (CSV genérico). Demonstrado em Leads: `leads/import` (CSV→Lead) e `leads/export` (Lead→CSV). *Integração fiscal NFe/XML específica fica como evolução (requer API externa).*
 6. **[ ] API pública (tokens)**
    - `HasApiTokens` já existe; faltam rotas `routes/api.php` versionadas (`/api/v1`) + throttle + documentação (OpenAPI).
 7. **[ ] App mobile / PWA**
@@ -134,7 +138,7 @@ resources/views/        # Blade por domínio + partials reutilizáveis
 
 ## 5. Qualidade
 
-- **Testes:** 38 testes / 106 asserções, todos verdes (`vendor/bin/phpunit --no-coverage`).
+- **Testes:** 47 testes / ~140 asserções, todos verdes (`vendor/bin/phpunit --no-coverage`).
 - **Cobertura:** auth (login/logout/reset/verificação), atividade (favoritar, tags, anexos, reações, menções), busca, relatórios (csv/excel/pdf/queue), RBAC básico, comentários.
 - **Banco de testes:** SQLite `:memory:` com `RefreshDatabase`.
 

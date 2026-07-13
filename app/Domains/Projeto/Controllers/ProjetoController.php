@@ -58,8 +58,10 @@ class ProjetoController extends Controller
         $projeto->load(['client', 'owner', 'timeline.user', 'comments.user']);
         $tasks = $projeto->tasks()->with('assignee')->orderBy('status')->get();
         $users = User::all();
+        $checklist = \App\Core\Models\ChecklistItem::where('project_id', $projeto->getKey())
+            ->orderBy('order')->get();
 
-        return view('projetos.show', compact('projeto', 'tasks', 'users'));
+        return view('projetos.show', compact('projeto', 'tasks', 'users', 'checklist'));
     }
 
     public function edit(Projeto $projeto): View
@@ -123,5 +125,14 @@ class ProjetoController extends Controller
         app(\App\Domains\Projeto\Actions\CreateTaskAction::class)->handle($data + ['project_id' => $projeto->id]);
 
         return redirect()->route('projetos.show', $projeto)->with('status', 'Tarefa adicionada.');
+    }
+
+    public function toggleChecklist(\App\Core\Models\ChecklistItem $item): RedirectResponse
+    {
+        $this->authorize('update', $item->project);
+
+        $item->update(['done' => ! $item->done]);
+
+        return redirect()->route('projetos.show', $item->project);
     }
 }

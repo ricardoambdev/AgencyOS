@@ -17,6 +17,14 @@
                 <input type="text" name="company" value="{{ old('company') }}" class="mt-1 w-full rounded-md border-gray-300 border px-3 py-2" required>
             </div>
             <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Segmento</label>
+                <select name="workspace_template" class="mt-1 w-full rounded-md border-gray-300 border px-3 py-2">
+                    @foreach(\App\Core\Support\WorkspaceStarter::available() as $key => $label)
+                        <option value="{{ $key }}" {{ old('workspace_template', 'agency') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Senha</label>
                 <input type="password" name="password" class="mt-1 w-full rounded-md border-gray-300 border px-3 py-2" required>
             </div>

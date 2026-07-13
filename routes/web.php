@@ -12,6 +12,8 @@ use App\Domains\Config\Controllers\RoleController;
 use App\Domains\Config\Controllers\SettingController;
 use App\Domains\Config\Controllers\WebhookController;
 use App\Domains\Config\Controllers\WorkflowController;
+use App\Domains\Config\Controllers\WorkflowStateController;
+use App\Domains\Config\Controllers\MenuController;
 use App\Domains\Projeto\Controllers\ProjectTemplateController;
 use App\Domains\Financeiro\Controllers\InvoiceController;
 use App\Domains\Producao\Controllers\EntregavelController;
@@ -55,10 +57,14 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard/customize', [DashboardController::class, 'customize'])->name('dashboard.customize');
     Route::post('dashboard/customize', [DashboardController::class, 'updateCustomization'])->name('dashboard.customize.update');
 
+    Route::get('leads/export', [LeadController::class, 'export'])->name('leads.export');
+    Route::get('leads/import', [LeadController::class, 'import'])->name('leads.import');
+    Route::post('leads/import', [LeadController::class, 'storeImport'])->name('leads.import.store');
     Route::resource('leads', LeadController::class);
     Route::resource('clientes', ClienteController::class);
     Route::resource('projetos', ProjetoController::class);
     Route::post('projetos/{projeto}/tasks', [ProjetoController::class, 'storeTask'])->name('projetos.tasks.store');
+    Route::post('projetos/checklist/{item}/toggle', [ProjetoController::class, 'toggleChecklist'])->name('projetos.checklist.toggle');
     Route::patch('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::resource('agenda', EventoController::class);
@@ -99,6 +105,8 @@ Route::post('/comments/{comment}/react', [CommentController::class, 'toggleReact
         Route::put('settings', [SettingController::class, 'updateSettings'])->name('settings.update');
         Route::resource('roles', RoleController::class);
         Route::resource('workflows', WorkflowController::class);
+        Route::resource('workflow-states', WorkflowStateController::class)->parameters(['workflow-states' => 'workflowState']);
+        Route::resource('menu', MenuController::class);
         Route::resource('automations', AutomationController::class);
         Route::resource('webhooks', WebhookController::class);
         Route::resource('custom-fields', CustomFieldController::class)->parameters(['custom-fields' => 'customField']);

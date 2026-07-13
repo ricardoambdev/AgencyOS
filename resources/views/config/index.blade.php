@@ -21,6 +21,14 @@
             <h3 class="font-semibold text-gray-800">Workflows</h3>
             <p class="text-sm text-gray-500">Máquinas de status.</p>
         </a>
+        <a href="{{ route('config.workflow-states.index') }}" class="bg-white shadow rounded-lg p-5 hover:shadow-md">
+            <h3 class="font-semibold text-gray-800">Estados por Entidade</h3>
+            <p class="text-sm text-gray-500">Configure os status de cada entidade.</p>
+        </a>
+        <a href="{{ route('config.menu.index') }}" class="bg-white shadow rounded-lg p-5 hover:shadow-md">
+            <h3 class="font-semibold text-gray-800">Menu do Workspace</h3>
+            <p class="text-sm text-gray-500">Personalize os itens de navegação.</p>
+        </a>
         <a href="{{ route('config.automations.index') }}" class="bg-white shadow rounded-lg p-5 hover:shadow-md">
             <h3 class="font-semibold text-gray-800">Automações</h3>
             <p class="text-sm text-gray-500">Gatilhos e ações.</p>

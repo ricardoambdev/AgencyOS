@@ -49,13 +49,18 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'company' => ['required', 'string', 'max:255'],
+            'workspace_template' => ['nullable', 'string', 'in:agency,clinic,ecommerce,saas'],
         ]);
+
+        $template = $data['workspace_template'] ?? 'agency';
 
         $company = Company::create([
             'name' => $data['company'],
             'slug' => \Illuminate\Support\Str::slug($data['company']).'-'.\Illuminate\Support\Str::random(4),
-            'workspace_template' => 'agency',
+            'workspace_template' => $template,
         ]);
+
+        app(\App\Core\Support\WorkspaceStarter::class)->seed($company, $template);
 
         $role = Role::create([
             'company_id' => $company->id,

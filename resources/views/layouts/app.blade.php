@@ -54,26 +54,9 @@
                         <div class="shrink-0 text-white font-bold text-lg">AgencyOS</div>
                         <div class="hidden md:block">
                             <div class="ml-10 flex items-baseline space-x-1">
-                                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'nav-link-active' : '' }}">Dashboard</a>
-                                <a href="{{ route('leads.index') }}" class="nav-link {{ request()->routeIs('leads.*') ? 'nav-link-active' : '' }}">CRM</a>
-                                <a href="{{ route('clientes.index') }}" class="nav-link {{ request()->routeIs('clientes.*') ? 'nav-link-active' : '' }}">Clientes</a>
-                                <a href="{{ route('projetos.index') }}" class="nav-link {{ request()->routeIs('projetos.*') ? 'nav-link-active' : '' }}">Projetos</a>
-                                <a href="{{ route('templates.index') }}" class="nav-link {{ request()->routeIs('templates.*') ? 'nav-link-active' : '' }}">Templates</a>
-                                <a href="{{ route('agenda.index') }}" class="nav-link {{ request()->routeIs('agenda.*') ? 'nav-link-active' : '' }}">Agenda</a>
-                                <a href="{{ route('producao.index') }}" class="nav-link {{ request()->routeIs('producao.*') ? 'nav-link-active' : '' }}">Produção</a>
-                                <a href="{{ route('wiki.index') }}" class="nav-link {{ request()->routeIs('wiki.*') ? 'nav-link-active' : '' }}">Wiki</a>
-                                <a href="{{ route('equipamentos.index') }}" class="nav-link {{ request()->routeIs('equipamentos.*') ? 'nav-link-active' : '' }}">Equipamentos</a>
-                                <a href="{{ route('horas.index') }}" class="nav-link {{ request()->routeIs('horas.*') ? 'nav-link-active' : '' }}">Horas</a>
-                                <a href="{{ route('comercial.index') }}" class="nav-link {{ request()->routeIs('comercial.*') ? 'nav-link-active' : '' }}">Comercial</a>
-                                <a href="{{ route('financeiro.index') }}" class="nav-link {{ request()->routeIs('financeiro.*') ? 'nav-link-active' : '' }}">Financeiro</a>
-                                <a href="{{ route('config.workflows.index') }}" class="nav-link {{ request()->routeIs('config.workflows.*') ? 'nav-link-active' : '' }}">Workflows</a>
-                                <a href="{{ route('config.automations.index') }}" class="nav-link {{ request()->routeIs('config.automations.*') ? 'nav-link-active' : '' }}">Automações</a>
-                                <a href="{{ route('config.webhooks.index') }}" class="nav-link {{ request()->routeIs('config.webhooks.*') ? 'nav-link-active' : '' }}">Webhooks</a>
-                                <a href="{{ route('config.roles.index') }}" class="nav-link {{ request()->routeIs('config.roles.*') ? 'nav-link-active' : '' }}">Funções</a>
-                                <a href="{{ route('config.custom-fields.index') }}" class="nav-link {{ request()->routeIs('config.custom-fields.*') ? 'nav-link-active' : '' }}">Campos</a>
-                                <a href="{{ route('config.index') }}" class="nav-link {{ request()->routeIs('config.index') || request()->routeIs('config.settings.*') ? 'nav-link-active' : '' }}">Configurações</a>
-                                <a href="{{ route('relatorios.index') }}" class="nav-link {{ request()->routeIs('relatorios.*') ? 'nav-link-active' : '' }}">Relatórios</a>
-                                <a href="{{ route('favoritos.index') }}" class="nav-link {{ request()->routeIs('favoritos.*') ? 'nav-link-active' : '' }}">Favoritos</a>
+                                @foreach(\App\Core\Models\MenuItem::forCompany() as $menuItem)
+                                    <a href="{{ $menuItem->href() }}" class="nav-link {{ $menuItem->isActive() ? 'nav-link-active' : '' }}">{{ $menuItem->label }}</a>
+                                @endforeach
                             </div>
                         </div>
                     </div>

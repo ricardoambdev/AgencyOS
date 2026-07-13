@@ -32,6 +32,16 @@
                     @endforelse
                 </ul>
             </div>
+            <div class="bg-white shadow rounded-lg p-6">
+                <h3 class="font-semibold text-gray-700 mb-3">Checklist ({{ count($template->checklist ?? []) }})</h3>
+                <ul class="divide-y divide-gray-100">
+                    @forelse(($template->checklist ?? []) as $item)
+                    <li class="py-2 text-sm text-gray-700">{{ $item }}</li>
+                    @empty
+                    <li class="text-gray-500">Nenhum item de checklist.</li>
+                    @endforelse
+                </ul>
+            </div>
         </div>
         <div class="space-y-6">
             <div class="bg-white shadow rounded-lg p-6">

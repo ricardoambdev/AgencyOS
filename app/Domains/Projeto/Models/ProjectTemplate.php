@@ -25,11 +25,12 @@ class ProjectTemplate extends Model
     protected $searchable = ['name', 'description'];
 
     protected $fillable = [
-        'company_id', 'name', 'description', 'is_active',
+        'company_id', 'name', 'description', 'is_active', 'checklist',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'checklist' => 'array',
     ];
 
     public function company(): BelongsTo

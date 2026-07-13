@@ -40,12 +40,16 @@ class ProjectTemplateController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
+            'checklist' => 'nullable|array',
+            'checklist.*' => 'nullable|string|max:255',
             'tasks' => 'nullable|array',
             'tasks.*.title' => 'nullable|string|max:255',
             'tasks.*.description' => 'nullable|string',
             'tasks.*.priority' => 'nullable|string',
             'tasks.*.estimated_hours' => 'nullable|numeric|min:0',
         ]);
+
+        $data['checklist'] = collect($request->input('checklist', []))->filter(fn ($c) => ! empty(trim((string) $c)))->values()->all();
 
         $template = app(CreateProjectTemplate::class)->handle($data);
 
@@ -76,12 +80,16 @@ class ProjectTemplateController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
+            'checklist' => 'nullable|array',
+            'checklist.*' => 'nullable|string|max:255',
             'tasks' => 'nullable|array',
             'tasks.*.title' => 'nullable|string|max:255',
             'tasks.*.description' => 'nullable|string',
             'tasks.*.priority' => 'nullable|string',
             'tasks.*.estimated_hours' => 'nullable|numeric|min:0',
         ]);
+
+        $data['checklist'] = collect($request->input('checklist', []))->filter(fn ($c) => ! empty(trim((string) $c)))->values()->all();
 
         app(UpdateProjectTemplate::class)->handle($template, $data);
 
@@ -136,6 +144,16 @@ class ProjectTemplateController extends Controller
                 'priority' => $task->priority,
                 'estimated_hours' => $task->estimated_hours,
                 'status' => 'pending',
+            ]);
+        }
+
+        foreach (array_values($template->checklist ?? []) as $index => $label) {
+            \App\Core\Models\ChecklistItem::create([
+                'company_id' => app(\App\Core\Support\CompanyContext::class)->id(),
+                'project_id' => $projeto->id,
+                'label' => $label,
+                'done' => false,
+                'order' => $index,
             ]);
         }
 
