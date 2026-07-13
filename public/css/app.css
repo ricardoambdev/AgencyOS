@@ -1,0 +1,143 @@
+/* ============================================================
+   AgencyOS — Design System base
+   Identidade visual Agência Sentapúa
+   Paleta: Primary (verde) + Neutral (verde-acinzentado)
+   ============================================================ */
+
+:root {
+    --brand-50:  #F6FFF2;
+    --brand-100: #D9FAC9;
+    --brand-200: #D1FAB8;
+    --brand-300: #C2F269;
+    --brand-400: #BDF04D;
+    --brand-500: #A3D825;
+    --brand-600: #8EC91F;
+    --brand-700: #73A61A;
+    --brand-800: #5A7F16;
+    --brand-900: #3E5910;
+
+    --neutral-50:  #FFFFFF;
+    --neutral-100: #F6FFF2;
+    --neutral-200: #E8F2E3;
+    --neutral-300: #D5DDD1;
+    --neutral-400: #B5CBAA;
+    --neutral-500: #9BAA94;
+    --neutral-600: #7D8479;
+    --neutral-700: #5F645C;
+    --neutral-800: #4E514C;
+    --neutral-900: #2E312D;
+
+    /* Tokens semânticos — tema claro */
+    --bg:        #F6FFF2;
+    --surface:   #FFFFFF;
+    --surface-2: #F6FFF2;
+    --border:    #E8F2E3;
+    --text:      #2E312D;
+    --text-muted:#7D8479;
+    --brand:     #73A61A;
+    --brand-strong: #5A7F16;
+    --ring:      rgba(138, 201, 31, 0.35);
+}
+
+html.dark {
+    --bg:        #2E312D;
+    --surface:   #4E514C;
+    --surface-2: #3A3D38;
+    --border:    #5F645C;
+    --text:      #F6FFF2;
+    --text-muted:#B5CBAA;
+    --brand:     #BDF04D;
+    --brand-strong: #C2F269;
+    --ring:      rgba(189, 240, 77, 0.35);
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; }
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Geist', 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Superfícies e utilitários semânticos */
+.surface      { background-color: var(--surface); border: 1px solid var(--border); }
+.surface-2    { background-color: var(--surface-2); }
+.border-app   { border-color: var(--border); }
+.text-app     { color: var(--text); }
+.text-muted   { color: var(--text-muted); }
+.bg-app       { background-color: var(--bg); }
+.brand-text   { color: var(--brand-strong); }
+html.dark .brand-text { color: var(--brand); }
+
+/* Focus ring padrão do design system */
+.focus-ring:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--ring);
+    border-color: var(--brand);
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--neutral-400); border-radius: 9999px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--neutral-500); background-clip: content-box; }
+
+/* Lucide icons */
+[data-lucide] { width: 1.15rem; height: 1.15rem; stroke-width: 2; }
+.lucide-lg [data-lucide], [data-lucide].lg { width: 1.4rem; height: 1.4rem; }
+.lucide-sm [data-lucide], [data-lucide].sm { width: 1rem; height: 1rem; }
+
+/* ============================================================
+   Animações (equivalentes discretos ao Framer Motion)
+   ============================================================ */
+@keyframes ao-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ao-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ao-fade-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ao-slide-left { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes ao-slide-right { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes ao-scale { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes ao-spin { to { transform: rotate(360deg); } }
+@keyframes ao-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.ao-fade      { animation: ao-fade .25s ease both; }
+.ao-fade-up   { animation: ao-fade-up .3s cubic-bezier(.21,1.02,.73,1) both; }
+.ao-fade-down { animation: ao-fade-down .3s cubic-bezier(.21,1.02,.73,1) both; }
+.ao-slide-left  { animation: ao-slide-left .3s cubic-bezier(.21,1.02,.73,1) both; }
+.ao-slide-right { animation: ao-slide-right .3s cubic-bezier(.21,1.02,.73,1) both; }
+.ao-scale      { animation: ao-scale .2s cubic-bezier(.21,1.02,.73,1) both; }
+
+.ao-spin { animation: ao-spin .8s linear infinite; }
+.ao-pulse { animation: ao-pulse 1.4s ease-in-out infinite; }
+
+/* Transições de página */
+#ao-page { animation: ao-fade-up .3s ease both; }
+
+/* Redução de movimento */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* ============================================================
+   Fallback de dark mode para views legadas (gray-*/bg-white)
+   Mantido apenas durante a transição — remover ao final.
+   ============================================================ */
+html.dark .bg-white,
+html.dark .bg-gray-50,
+html.dark .bg-gray-100 { background-color: var(--surface) !important; color: var(--text) !important; }
+html.dark .text-gray-800,
+html.dark .text-gray-700 { color: var(--text) !important; }
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400 { color: var(--text-muted) !important; }
+html.dark .border-gray-200,
+html.dark .border-gray-300 { border-color: var(--border) !important; }
+html.dark input,
+html.dark textarea,
+html.dark select { background-color: var(--surface-2) !important; color: var(--text) !important; border-color: var(--border) !important; }
+html.dark .shadow,
+html.dark .shadow-sm,
+html.dark .shadow-md { box-shadow: 0 1px 2px rgba(0,0,0,.2) !important; }
