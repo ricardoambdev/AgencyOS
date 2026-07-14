@@ -1,42 +1,49 @@
 @extends('layouts.app')
 @section('content')
-    <h1 class="text-2xl font-bold text-gray-800 mb-6">Nova Fatura</h1>
-    <div class="bg-white shadow rounded-lg p-6 max-w-2xl">
-        <form method="POST" action="{{ route('financeiro.store') }}">@csrf
-            <div class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700">Cliente *</label>
-                    <select name="client_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
-                        <option value="">Selecione...</option>
-                        @foreach($clientes as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach
-                    </select></div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium text-gray-700">Número *</label>
-                        <input type="text" name="number" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required></div>
-                    <div><label class="block text-sm font-medium text-gray-700">Status</label>
-                        <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                            <option value="draft">Rascunho</option>
-                            <option value="sent">Enviada</option>
-                            <option value="paid">Paga</option>
-                            <option value="overdue">Vencida</option>
-                        </select></div>
+    <div class="mx-auto max-w-2xl">
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-bold tracking-tight text-app">Nova Fatura</h1>
+            <a href="{{ route('financeiro.index') }}" class="text-sm text-muted hover:underline">Voltar</a>
+        </div>
+        <x-ui.card>
+            <form method="POST" action="{{ route('financeiro.store') }}">@csrf
+                <div class="space-y-4">
+                    <x-ui.field label="Cliente" name="client_id" required>
+                        <x-ui.select name="client_id" :options="['' => 'Selecione...'] + $clientes->pluck('name', 'id')->toArray()" />
+                    </x-ui.field>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <x-ui.field label="Número" name="number" required>
+                            <x-ui.input name="number" />
+                        </x-ui.field>
+                        <x-ui.field label="Status" name="status">
+                            <x-ui.select name="status" :options="['draft' => 'Rascunho', 'sent' => 'Enviada', 'paid' => 'Paga', 'overdue' => 'Vencida']" :selected="old('status', 'draft')" />
+                        </x-ui.field>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <x-ui.field label="Emissão" name="issued_at">
+                            <x-ui.input type="date" name="issued_at" :value="old('issued_at')" />
+                        </x-ui.field>
+                        <x-ui.field label="Vencimento" name="due_at">
+                            <x-ui.input type="date" name="due_at" :value="old('due_at')" />
+                        </x-ui.field>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <x-ui.field label="Subtotal" name="subtotal">
+                            <x-ui.input type="number" step="0.01" name="subtotal" :value="old('subtotal')" />
+                        </x-ui.field>
+                        <x-ui.field label="Imposto" name="tax">
+                            <x-ui.input type="number" step="0.01" name="tax" :value="old('tax')" />
+                        </x-ui.field>
+                        <x-ui.field label="Total" name="total">
+                            <x-ui.input type="number" step="0.01" name="total" :value="old('total')" />
+                        </x-ui.field>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium text-gray-700">Emissão</label>
-                        <input type="date" name="issued_at" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-                    <div><label class="block text-sm font-medium text-gray-700">Vencimento</label>
-                        <input type="date" name="due_at" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
+                <div class="mt-6 flex items-center gap-3">
+                    <x-ui.button type="submit" icon="save">Salvar</x-ui.button>
+                    <a href="{{ route('financeiro.index') }}" class="text-sm text-muted hover:underline">Cancelar</a>
                 </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div><label class="block text-sm font-medium text-gray-700">Subtotal</label>
-                        <input type="number" step="0.01" name="subtotal" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-                    <div><label class="block text-sm font-medium text-gray-700">Imposto</label>
-                        <input type="number" step="0.01" name="tax" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-                    <div><label class="block text-sm font-medium text-gray-700">Total</label>
-                        <input type="number" step="0.01" name="total" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-                </div>
-            </div>
-            <div class="mt-6"><button class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Salvar</button>
-            <a href="{{ route('financeiro.index') }}" class="ml-2 text-gray-600 text-sm">Cancelar</a></div>
-        </form>
+            </form>
+        </x-ui.card>
     </div>
 @endsection

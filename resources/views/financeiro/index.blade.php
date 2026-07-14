@@ -1,36 +1,39 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Financeiro</h1>
-        <a href="{{ route('financeiro.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Nova Fatura</a>
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-app">Financeiro</h1>
+            <p class="text-sm text-muted">Controle de faturas e recebimentos.</p>
+        </div>
+        <x-ui.button href="{{ route('financeiro.create') }}" icon="plus">Nova Fatura</x-ui.button>
     </div>
-    <div class="grid grid-cols-2 gap-4 mb-6">
-        <div class="bg-white shadow rounded-lg p-4"><div class="text-sm text-gray-500">A receber</div><div class="text-xl font-bold text-gray-800">R$ {{ number_format($totals['aberto'], 2, ',', '.') }}</div></div>
-        <div class="bg-white shadow rounded-lg p-4"><div class="text-sm text-gray-500">Recebido</div><div class="text-xl font-bold text-green-600">R$ {{ number_format($totals['pago'], 2, ',', '.') }}</div></div>
+
+    <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <x-ui.stat-card label="A receber" value="R$ {{ number_format($totals['aberto'], 2, ',', '.') }}" tone="primary" icon="trending-up" />
+        <x-ui.stat-card label="Recebido" value="R$ {{ number_format($totals['pago'], 2, ',', '.') }}" tone="success" icon="check-circle" />
     </div>
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50"><tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Número</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vencimento</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-            </tr></thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($invoices as $inv)
-                <tr>
-                    <td class="px-6 py-4 text-sm font-medium text-indigo-600">{{ $inv->number }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $inv->client->name ?? '-' }}</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">{{ $inv->status }}</span></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $inv->due_at?->format('d/m/Y') ?? '-' }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">R$ {{ number_format($inv->total, 2, ',', '.') }}</td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhuma fatura.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+
+    <x-ui.card>
+        <x-ui.table>
+            <x-slot name="head">
+                <x-ui.th>Número</x-ui.th>
+                <x-ui.th>Cliente</x-ui.th>
+                <x-ui.th>Status</x-ui.th>
+                <x-ui.th>Vencimento</x-ui.th>
+                <x-ui.th>Total</x-ui.th>
+            </x-slot>
+            @forelse($invoices as $inv)
+                <x-ui.tr>
+                    <x-ui.td class="font-medium text-primary-700 dark:text-primary-300">{{ $inv->number }}</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $inv->client->name ?? '-' }}</x-ui.td>
+                    <x-ui.td><x-ui.badge>{{ $inv->status }}</x-ui.badge></x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $inv->due_at?->format('d/m/Y') ?? '-' }}</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">R$ {{ number_format($inv->total, 2, ',', '.') }}</x-ui.td>
+                </x-ui.tr>
+            @empty
+                <x-ui.empty-state title="Nenhuma fatura" description="Emita uma nova fatura para começar." />
+            @endforelse
+        </x-ui.table>
+    </x-ui.card>
     <div class="mt-4">{{ $invoices->links() }}</div>
 @endsection
