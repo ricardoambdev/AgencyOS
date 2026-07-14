@@ -1,23 +1,45 @@
 @extends('layouts.app')
+
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Agenda</h1>
-        <a href="{{ route('agenda.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Novo Evento</a>
-    </div>
-    <div class="bg-white shadow rounded-lg divide-y divide-gray-100">
-        @forelse($events as $event)
-        <div class="p-4 flex items-center justify-between">
-            <div>
-                <div class="font-medium text-gray-800">{{ $event->title }}</div>
-                <div class="text-xs text-gray-500">{{ $event->start_at->format('d/m/Y H:i') }} @if($event->location) &middot; {{ $event->location }} @endif &middot; {{ $event->owner->name ?? '' }}</div>
-            </div>
-            <form method="POST" action="{{ route('agenda.destroy', $event) }}" onsubmit="return confirm('Remover?')">@csrf @method('DELETE')
-                <button class="text-red-600 text-sm">Remover</button>
-            </form>
+    <div class="flex items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-[var(--text)]">Agenda</h1>
+            <p class="text-sm text-[var(--text-muted)]">Eventos e compromissos da equipe</p>
         </div>
-        @empty
-        <div class="p-8 text-center text-gray-500">Nenhum evento.</div>
-        @endforelse
+        <x-ui.button href="{{ route('agenda.create') }}" icon="plus">
+            Novo Evento
+        </x-ui.button>
     </div>
+
+    <x-ui.card>
+        <x-ui.list>
+            @forelse($events as $event)
+                <x-ui.list-item>
+                    <div>
+                        <div class="font-medium text-[var(--text)]">{{ $event->title }}</div>
+                        <div class="text-xs text-[var(--text-muted)]">
+                            {{ $event->start_at->format('d/m/Y H:i') }}
+                            @if($event->location) &middot; {{ $event->location }} @endif
+                            @if($event->owner->name ?? null) &middot; {{ $event->owner->name }} @endif
+                        </div>
+                    </div>
+                    <x-ui.form
+                        method="POST"
+                        action="{{ route('agenda.destroy', $event) }}"
+                        :confirm="'Remover este evento?'"
+                        class="shrink-0"
+                    >
+                        @method('DELETE')
+                        <x-ui.button type="submit" variant="danger" size="sm" icon="trash-2">
+                            Remover
+                        </x-ui.button>
+                    </x-ui.form>
+                </x-ui.list-item>
+            @empty
+                <x-ui.empty-state icon="calendar" title="Nenhum evento" description="Crie um novo evento para começar." />
+            @endforelse
+        </x-ui.list>
+    </x-ui.card>
+
     <div class="mt-4">{{ $events->links() }}</div>
 @endsection

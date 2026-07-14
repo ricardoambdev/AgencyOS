@@ -1,52 +1,60 @@
 @extends('layouts.app')
+
 @section('content')
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center justify-between gap-4 mb-6">
         <div>
-            <a href="{{ route('templates.index') }}" class="text-sm text-indigo-600">&larr; Templates</a>
-            <h1 class="text-2xl font-bold text-gray-800">{{ $template->name }}</h1>
+            <a href="{{ route('templates.index') }}" class="text-sm text-primary-700 dark:text-primary-300">&larr; Templates</a>
+            <h1 class="text-2xl font-bold text-[var(--text)]">{{ $template->name }}</h1>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('templates.apply', $template) }}" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700">Aplicar</a>
-            <a href="{{ route('templates.edit', $template) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Editar</a>
+            <x-ui.button href="{{ route('templates.apply', $template) }}" variant="success" icon="play">
+                Aplicar
+            </x-ui.button>
+            <x-ui.button href="{{ route('templates.edit', $template) }}" icon="pencil">
+                Editar
+            </x-ui.button>
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
             @if($template->description)
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Descrição</h3>
-                <p class="text-sm text-gray-600 whitespace-pre-line">{{ $template->description }}</p>
-            </div>
+                <x-ui.card>
+                    <h3 class="font-semibold text-[var(--text)] mb-3">Descrição</h3>
+                    <p class="text-sm text-[var(--text-muted)] whitespace-pre-line">{{ $template->description }}</p>
+                </x-ui.card>
             @endif
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Tarefas ({{ $template->templateTasks->count() }})</h3>
-                <ul class="divide-y divide-gray-100">
+
+            <x-ui.card>
+                <h3 class="font-semibold text-[var(--text)] mb-3">Tarefas ({{ $template->templateTasks->count() }})</h3>
+                <ul class="divide-y divide-[var(--border)]">
                     @forelse($template->templateTasks as $task)
-                    <li class="py-2 flex justify-between text-sm">
-                        <span>{{ $task->title }} <span class="text-gray-400">— {{ $task->priority ?? 'sem prioridade' }}</span></span>
-                        <span class="text-gray-500">{{ number_format($task->estimated_hours, 2, ',', '.') }}h</span>
-                    </li>
+                        <li class="py-2 flex justify-between text-sm">
+                            <span class="text-[var(--text)]">{{ $task->title }} <span class="text-[var(--text-muted)]">— {{ $task->priority ?? 'sem prioridade' }}</span></span>
+                            <span class="text-[var(--text-muted)]">{{ number_format($task->estimated_hours, 2, ',', '.') }}h</span>
+                        </li>
                     @empty
-                    <li class="text-gray-500">Nenhuma tarefa definida.</li>
+                        <li class="text-[var(--text-muted)]">Nenhuma tarefa definida.</li>
                     @endforelse
                 </ul>
-            </div>
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Checklist ({{ count($template->checklist ?? []) }})</h3>
-                <ul class="divide-y divide-gray-100">
+            </x-ui.card>
+
+            <x-ui.card>
+                <h3 class="font-semibold text-[var(--text)] mb-3">Checklist ({{ count($template->checklist ?? []) }})</h3>
+                <ul class="divide-y divide-[var(--border)]">
                     @forelse(($template->checklist ?? []) as $item)
-                    <li class="py-2 text-sm text-gray-700">{{ $item }}</li>
+                        <li class="py-2 text-sm text-[var(--text)]">{{ $item }}</li>
                     @empty
-                    <li class="text-gray-500">Nenhum item de checklist.</li>
+                        <li class="text-[var(--text-muted)]">Nenhum item de checklist.</li>
                     @endforelse
                 </ul>
-            </div>
+            </x-ui.card>
         </div>
+
         <div class="space-y-6">
-            <div class="bg-white shadow rounded-lg p-6">
+            <x-ui.card>
                 @include('partials.timeline', ['model' => $template])
-            </div>
+            </x-ui.card>
         </div>
     </div>
 @endsection

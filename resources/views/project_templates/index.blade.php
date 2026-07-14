@@ -1,31 +1,40 @@
 @extends('layouts.app')
+
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Templates de Projeto</h1>
-        <a href="{{ route('templates.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Novo Template</a>
+    <div class="flex items-center justify-between gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-[var(--text)]">Templates de Projeto</h1>
+            <p class="text-sm text-[var(--text-muted)]">Modelos reutilizáveis de projetos e tarefas</p>
+        </div>
+        <x-ui.button href="{{ route('templates.create') }}" icon="plus">
+            Novo Template
+        </x-ui.button>
     </div>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarefas</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ativo</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($templates as $t)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4"><a href="{{ route('templates.show', $t) }}" class="text-indigo-600">{{ $t->name }}</a></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $t->template_tasks_count }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $t->is_active ? 'Sim' : 'Não' }}</td>
-                </tr>
-                @empty
-                <tr><td colspan="3" class="px-6 py-8 text-center text-gray-500">Nenhum template.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <x-ui.card>
+        <x-ui.table>
+            <x-slot name="head">
+                <x-ui.th>Nome</x-ui.th>
+                <x-ui.th>Tarefas</x-ui.th>
+                <x-ui.th>Ativo</x-ui.th>
+            </x-slot>
+            @forelse($templates as $t)
+                <x-ui.tr>
+                    <x-ui.td><a href="{{ route('templates.show', $t) }}" class="text-primary-700 dark:text-primary-300 font-medium">{{ $t->name }}</a></x-ui.td>
+                    <x-ui.td class="text-[var(--text-muted)]">{{ $t->template_tasks_count }}</x-ui.td>
+                    <x-ui.td>
+                        @if($t->is_active)
+                            <x-ui.badge tone="success">Sim</x-ui.badge>
+                        @else
+                            <x-ui.badge tone="neutral">Não</x-ui.badge>
+                        @endif
+                    </x-ui.td>
+                </x-ui.tr>
+            @empty
+                <x-ui.tr><x-ui.td colspan="3"><x-ui.empty-state icon="layout-template" title="Nenhum template" description="Crie um modelo de projeto para começar." /></x-ui.td></x-ui.tr>
+            @endforelse
+        </x-ui.table>
+    </x-ui.card>
+
     <div class="mt-4">{{ $templates->links() }}</div>
 @endsection
