@@ -39,6 +39,7 @@
                     <div class="flex justify-between"><dt class="text-muted">Tempo de uso</dt><dd class="text-app">{{ $equipamento->tempoDeUso() ?? '-' }}</dd></div>
                 </dl>
             </x-ui.card>
+            @include('partials.nota-fiscal', ['model' => $equipamento])
             <x-ui.card>
                 @include('partials.timeline', ['model' => $equipamento])
             </x-ui.card>

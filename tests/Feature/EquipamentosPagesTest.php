@@ -63,6 +63,7 @@ class EquipamentosPagesTest extends TestCase
         $view->assertStatus(200);
         $view->assertSee('R$ 3.500,00');
         $view->assertSee('Sim');
+        $view->assertSee('Nota Fiscal');
     }
 
     public function test_tempo_de_uso_por_extenso(): void
