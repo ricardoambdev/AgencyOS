@@ -1,103 +1,67 @@
 <div class="space-y-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Cliente</label>
-            <select name="client_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                <option value="">—</option>
-                @foreach($clientes as $c)
-                    <option value="{{ $c->id }}" {{ old('client_id', optional($contrato)->client_id) == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Responsável</label>
-            <select name="responsavel_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                <option value="">—</option>
-                @foreach($users as $u)
-                    <option value="{{ $u->id }}" {{ old('responsavel_id', optional($contrato)->responsavel_id ?? auth()->id()) == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
-                @endforeach
-            </select>
-        </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <x-ui.field label="Cliente" name="client_id">
+            <x-ui.select name="client_id" :options="['' => '—'] + $clientes->pluck('name', 'id')->toArray()" :selected="old('client_id', optional($contrato)->client_id)" />
+        </x-ui.field>
+        <x-ui.field label="Responsável" name="responsavel_id">
+            <x-ui.select name="responsavel_id" :options="['' => '—'] + $users->pluck('name', 'id')->toArray()" :selected="old('responsavel_id', optional($contrato)->responsavel_id ?? auth()->id())" />
+        </x-ui.field>
     </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Título</label>
-        <input type="text" name="title" value="{{ old('title', optional($contrato)->title) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
+    <x-ui.field label="Título" name="title" required>
+        <x-ui.input name="title" :value="old('title', optional($contrato)->title)" />
+    </x-ui.field>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <x-ui.field label="Tipo" name="type">
+            <x-ui.select name="type" :options="['fixed' => 'Preço fixo', 'hourly' => 'Por hora', 'retainer' => 'Retainer']" :selected="old('type', optional($contrato)->type ?? 'fixed')" />
+        </x-ui.field>
+        <x-ui.field label="Valor" name="value">
+            <x-ui.input type="number" step="0.01" name="value" :value="old('value', optional($contrato)->value)" />
+        </x-ui.field>
+        <x-ui.field label="Moeda" name="currency">
+            <x-ui.input name="currency" :value="old('currency', optional($contrato)->currency ?? 'BRL')" />
+        </x-ui.field>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Tipo</label>
-            <select name="type" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach(['fixed' => 'Preço fixo', 'hourly' => 'Por hora', 'retainer' => 'Retainer'] as $k => $v)
-                    <option value="{{ $k }}" {{ old('type', optional($contrato)->type ?? 'fixed') == $k ? 'selected' : '' }}>{{ $v }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Valor</label>
-            <input type="number" step="0.01" name="value" value="{{ old('value', optional($contrato)->value) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Moeda</label>
-            <input type="text" name="currency" value="{{ old('currency', optional($contrato)->currency ?? 'BRL') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-        </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <x-ui.field label="Início" name="start_date">
+            <x-ui.input type="date" name="start_date" :value="old('start_date', optional(optional($contrato)->start_date)->format('Y-m-d'))" />
+        </x-ui.field>
+        <x-ui.field label="Fim" name="end_date">
+            <x-ui.input type="date" name="end_date" :value="old('end_date', optional(optional($contrato)->end_date)->format('Y-m-d'))" />
+        </x-ui.field>
+        <x-ui.field label="Assinado em" name="signed_at">
+            <x-ui.input type="date" name="signed_at" :value="old('signed_at', optional(optional($contrato)->signed_at)->format('Y-m-d'))" />
+        </x-ui.field>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Início</label>
-            <input type="date" name="start_date" value="{{ old('start_date', optional(optional($contrato)->start_date)->format('Y-m-d')) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Fim</label>
-            <input type="date" name="end_date" value="{{ old('end_date', optional(optional($contrato)->end_date)->format('Y-m-d')) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Assinado em</label>
-            <input type="date" name="signed_at" value="{{ old('signed_at', optional(optional($contrato)->signed_at)->format('Y-m-d')) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-        </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <x-ui.field label="Status" name="status">
+            <x-ui.select name="status" :options="['rascunho' => 'Rascunho', 'ativo' => 'Ativo', 'encerrado' => 'Encerrado', 'cancelado' => 'Cancelado']" :selected="old('status', optional($contrato)->status ?? 'rascunho')" />
+        </x-ui.field>
+        <x-ui.field label="Renovação" name="renewal_type">
+            <x-ui.select name="renewal_type" :options="['none' => 'Nenhuma', 'mensal' => 'Mensal', 'anual' => 'Anual']" :selected="old('renewal_type', optional($contrato)->renewal_type ?? 'none')" />
+        </x-ui.field>
+        <x-ui.field label="Próx. renovação" name="renewal_date">
+            <x-ui.input type="date" name="renewal_date" :value="old('renewal_date', optional(optional($contrato)->renewal_date)->format('Y-m-d'))" />
+        </x-ui.field>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Status</label>
-            <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach(['rascunho' => 'Rascunho', 'ativo' => 'Ativo', 'encerrado' => 'Encerrado', 'cancelado' => 'Cancelado'] as $k => $v)
-                    <option value="{{ $k }}" {{ old('status', optional($contrato)->status ?? 'rascunho') == $k ? 'selected' : '' }}>{{ $v }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Renovação</label>
-            <select name="renewal_type" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach(['none' => 'Nenhuma', 'mensal' => 'Mensal', 'anual' => 'Anual'] as $k => $v)
-                    <option value="{{ $k }}" {{ old('renewal_type', optional($contrato)->renewal_type ?? 'none') == $k ? 'selected' : '' }}>{{ $v }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Próx. renovação</label>
-            <input type="date" name="renewal_date" value="{{ old('renewal_date', optional(optional($contrato)->renewal_date)->format('Y-m-d')) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-        </div>
-    </div>
+    <x-ui.field label="Descrição" name="description">
+        <x-ui.textarea name="description" :value="old('description', optional($contrato)->description)" rows="3" />
+    </x-ui.field>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Descrição</label>
-        <textarea name="description" rows="3" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">{{ old('description', optional($contrato)->description) }}</textarea>
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Documentos</label>
-        <input type="file" name="files[]" multiple class="mt-1 w-full text-sm">
+    <x-ui.field label="Documentos" name="files">
+        <input type="file" name="files[]" multiple class="mt-1 w-full text-sm text-app">
         @if(optional($contrato)->attachments)
             <ul class="mt-2 space-y-1 text-sm">
                 @foreach($contrato->attachments as $a)
-                    <li><a href="{{ route('comercial.attachments.download', [$contrato, $a]) }}" class="text-indigo-600">{{ $a->name }}</a></li>
+                    <li><a href="{{ route('comercial.attachments.download', [$contrato, $a]) }}" class="text-primary-700 hover:underline dark:text-primary-300">{{ $a->name }}</a></li>
                 @endforeach
             </ul>
         @endif
-    </div>
+    </x-ui.field>
 
     @include('partials.tags-input', ['model' => $contrato ?? null])
 </div>

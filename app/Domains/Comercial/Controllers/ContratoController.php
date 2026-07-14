@@ -76,7 +76,7 @@ class ContratoController extends Controller
     public function show(Contrato $contrato)
     {
         $this->authorize('view', $contrato);
-        $contrato->load(['cliente', 'responsavel', 'comments.user', 'attachments', 'timeline.causer']);
+        $contrato->load(['cliente', 'responsavel', 'comments.user', 'attachments', 'timeline.user']);
 
         return view('comercial.show', compact('contrato'));
     }
