@@ -28,7 +28,9 @@
             <x-slot name="head">
                 <x-ui.th>Equipamento</x-ui.th>
                 <x-ui.th>Tipo</x-ui.th>
-                <x-ui.th>Status</x-ui.th>
+                <x-ui.th>Situação</x-ui.th>
+                <x-ui.th>Valor</x-ui.th>
+                <x-ui.th>Tempo de uso</x-ui.th>
                 <x-ui.th>Responsável</x-ui.th>
                 <x-ui.th>Série</x-ui.th>
             </x-slot>
@@ -36,7 +38,9 @@
                 <x-ui.tr>
                     <x-ui.td><a href="{{ route('equipamentos.show', $e) }}" class="font-medium text-primary-700 hover:underline dark:text-primary-300">{{ $e->name }}</a></x-ui.td>
                     <x-ui.td class="text-sm text-muted">{{ App\Domains\Equipamento\Controllers\EquipamentoController::tipos()[$e->type] ?? $e->type }}</x-ui.td>
-                    <x-ui.td><x-ui.badge>{{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$e->status] ?? $e->status }}</x-ui.badge></x-ui.td>
+                    <x-ui.td><x-ui.badge variant="{{ App\Domains\Equipamento\Models\Equipamento::situacaoVariant($e->situacao) }}" dot>{{ App\Domains\Equipamento\Models\Equipamento::situacoes()[$e->situacao] ?? $e->situacao }}</x-ui.badge></x-ui.td>
+                    <x-ui.td class="text-sm text-app">R$ {{ number_format($e->valor, 2, ',', '.') }}</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $e->tempoDeUso() ?? '-' }}</x-ui.td>
                     <x-ui.td class="text-sm text-muted">{{ $e->owner->name ?? '-' }}</x-ui.td>
                     <x-ui.td class="text-sm text-muted">{{ $e->serial ?? '-' }}</x-ui.td>
                 </x-ui.tr>

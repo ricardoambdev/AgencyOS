@@ -76,6 +76,10 @@ class EquipamentoController extends Controller
             'serial' => ['nullable', 'string', 'max:255'],
             'purchase_date' => ['nullable', 'date'],
             'description' => ['nullable', 'string'],
+            'valor' => ['nullable', 'numeric', 'min:0'],
+            'tem_seguro' => ['nullable', 'boolean'],
+            'valor_seguro' => ['nullable', 'numeric', 'min:0', 'required_if:tem_seguro,1'],
+            'situacao' => ['nullable', 'string', 'in:funcional,desatualizada,quebrada'],
         ]);
 
         $this->authorize('create', Equipamento::class);
@@ -114,6 +118,10 @@ class EquipamentoController extends Controller
             'serial' => ['nullable', 'string', 'max:255'],
             'purchase_date' => ['nullable', 'date'],
             'description' => ['nullable', 'string'],
+            'valor' => ['nullable', 'numeric', 'min:0'],
+            'tem_seguro' => ['nullable', 'boolean'],
+            'valor_seguro' => ['nullable', 'numeric', 'min:0', 'required_if:tem_seguro,1'],
+            'situacao' => ['nullable', 'string', 'in:funcional,desatualizada,quebrada'],
         ]);
 
         $oldStatus = $equipamento->status;
