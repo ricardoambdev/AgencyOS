@@ -4,39 +4,27 @@
 @endphp
 
 <div class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Título</label>
-        <input type="text" name="title" value="{{ old('title', optional($artigo)->title) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
-    </div>
+    <x-ui.field label="Título" name="title" required>
+        <x-ui.input name="title" :value="old('title', optional($artigo)->title)" />
+    </x-ui.field>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Categoria</label>
-            <select name="category" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach($categorias as $k => $l)
-                    <option value="{{ $k }}" {{ old('category', optional($artigo)->category ?? 'geral') == $k ? 'selected' : '' }}>{{ $l }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Status</label>
-            <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach($status as $k => $l)
-                    <option value="{{ $k }}" {{ old('status', optional($artigo)->status ?? 'rascunho') == $k ? 'selected' : '' }}>{{ $l }}</option>
-                @endforeach
-            </select>
-        </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <x-ui.field label="Categoria" name="category">
+            <x-ui.select name="category" :options="$categorias" :selected="old('category', optional($artigo)->category ?? 'geral')" />
+        </x-ui.field>
+        <x-ui.field label="Status" name="status">
+            <x-ui.select name="status" :options="$status" :selected="old('status', optional($artigo)->status ?? 'rascunho')" />
+        </x-ui.field>
         <div class="flex items-end">
-            <label class="flex items-center gap-2 text-sm text-gray-700">
-                <input type="checkbox" name="client_visible" value="1" {{ old('client_visible', optional($artigo)->client_visible) ? 'checked' : '' }}>
+            <label class="flex items-center gap-2 text-sm text-app">
+                <input type="checkbox" name="client_visible" value="1" {{ old('client_visible', optional($artigo)->client_visible) ? 'checked' : '' }} class="h-4 w-4 rounded border-border text-brand focus:ring-[var(--ring)]">
                 Visível no Portal do Cliente
             </label>
         </div>
     </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Conteúdo</label>
-        <textarea name="body" rows="12" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm">{{ old('body', optional($artigo)->body) }}</textarea>
-        <p class="text-xs text-gray-400 mt-1">Texto simples (quebras de linha preservadas).</p>
-    </div>
+    <x-ui.field label="Conteúdo" name="body">
+        <x-ui.textarea name="body" :value="old('body', optional($artigo)->body)" rows="12" class="font-mono text-sm" />
+        <p class="mt-1 text-xs text-muted">Texto simples (quebras de linha preservadas).</p>
+    </x-ui.field>
 </div>
