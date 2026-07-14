@@ -1,40 +1,41 @@
+@php
+    $projStatuses = \App\Core\Models\WorkflowState::resolve(\App\Domains\Projeto\Models\Projeto::class);
+    $projMeta = \App\Core\Models\WorkflowState::meta(\App\Domains\Projeto\Models\Projeto::class);
+    $initial = collect($projMeta)->filter(fn ($m) => $m['is_initial'])->keys()->first() ?? array_key_first($projStatuses);
+    $current = old('status', $projeto->status ?? $initial);
+@endphp
+
 <div class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Cliente *</label>
-        <select name="client_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
-            <option value="">Selecione...</option>
-            @foreach($clientes as $c)<option value="{{ $c->id }}" {{ ($projeto->client_id ?? '') == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>@endforeach
-        </select>
+    <x-ui.field label="Cliente" name="client_id" required>
+        <x-ui.select name="client_id" :options="['' => 'Selecione...'] + $clientes->pluck('name', 'id')->toArray()" :selected="old('client_id', $projeto->client_id ?? '')" />
+    </x-ui.field>
+
+    <x-ui.field label="Nome" name="name" required>
+        <x-ui.input name="name" :value="old('name', $projeto->name ?? '')" />
+    </x-ui.field>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <x-ui.field label="Status" name="status">
+            <x-ui.select name="status" :options="$projStatuses" :selected="$current" />
+        </x-ui.field>
+        <x-ui.field label="Responsável" name="owner_id">
+            <x-ui.select name="owner_id" :options="['' => '-'] + $owners->pluck('name', 'id')->toArray()" :selected="old('owner_id', $projeto->owner_id ?? '')" />
+        </x-ui.field>
     </div>
-    <div><label class="block text-sm font-medium text-gray-700">Nome *</label>
-        <input type="text" name="name" value="{{ old('name', $projeto->name ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required></div>
-    <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-sm font-medium text-gray-700">Status</label>
-            @php
-                $projStatuses = \App\Core\Models\WorkflowState::resolve(\App\Domains\Projeto\Models\Projeto::class);
-                $projMeta = \App\Core\Models\WorkflowState::meta(\App\Domains\Projeto\Models\Projeto::class);
-                $initial = collect($projMeta)->filter(fn ($m) => $m['is_initial'])->keys()->first() ?? array_key_first($projStatuses);
-                $current = old('status', $projeto->status ?? $initial);
-            @endphp
-            <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach($projStatuses as $v => $l)
-                    <option value="{{ $v }}" {{ $current == $v ? 'selected' : '' }}>{{ $l }}</option>
-                @endforeach
-            </select></div>
-        <div><label class="block text-sm font-medium text-gray-700">Responsável</label>
-            <select name="owner_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                <option value="">-</option>
-                @foreach($owners as $o)<option value="{{ $o->id }}" {{ ($projeto->owner_id ?? '') == $o->id ? 'selected' : '' }}>{{ $o->name }}</option>@endforeach
-            </select></div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <x-ui.field label="Início" name="start_date">
+            <x-ui.input type="date" name="start_date" :value="old('start_date', $projeto->start_date ?? '')" />
+        </x-ui.field>
+        <x-ui.field label="Término" name="end_date">
+            <x-ui.input type="date" name="end_date" :value="old('end_date', $projeto->end_date ?? '')" />
+        </x-ui.field>
+        <x-ui.field label="Orçamento (R$)" name="budget">
+            <x-ui.input type="number" step="0.01" name="budget" :value="old('budget', $projeto->budget ?? '')" />
+        </x-ui.field>
     </div>
-    <div class="grid grid-cols-3 gap-4">
-        <div><label class="block text-sm font-medium text-gray-700">Início</label>
-            <input type="date" name="start_date" value="{{ old('start_date', $projeto->start_date ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-        <div><label class="block text-sm font-medium text-gray-700">Término</label>
-            <input type="date" name="end_date" value="{{ old('end_date', $projeto->end_date ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-        <div><label class="block text-sm font-medium text-gray-700">Orçamento (R$)</label>
-            <input type="number" step="0.01" name="budget" value="{{ old('budget', $projeto->budget ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-    </div>
-    <div><label class="block text-sm font-medium text-gray-700">Descrição</label>
-        <textarea name="description" rows="3" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">{{ old('description', $projeto->description ?? '') }}</textarea></div>
+
+    <x-ui.field label="Descrição" name="description">
+        <x-ui.textarea name="description" :value="old('description', $projeto->description ?? '')" rows="3" />
+    </x-ui.field>
 </div>

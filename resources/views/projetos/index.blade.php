@@ -1,34 +1,34 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Projetos</h1>
-        <a href="{{ route('projetos.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Novo Projeto</a>
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-app">Projetos</h1>
+            <p class="text-sm text-muted">Acompanhe a entrega e o orçamento dos projetos.</p>
+        </div>
+        <x-ui.button href="{{ route('projetos.create') }}" icon="plus">Novo Projeto</x-ui.button>
     </div>
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Projeto</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Responsável</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Orçamento</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($projetos as $projeto)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4"><a href="{{ route('projetos.show', $projeto) }}" class="text-indigo-600 font-medium">{{ $projeto->name }}</a></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $projeto->client->name ?? '-' }}</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">{{ $projeto->status }}</span></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $projeto->owner->name ?? '-' }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">R$ {{ number_format($projeto->budget, 2, ',', '.') }}</td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhum projeto.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+
+    <x-ui.card>
+        <x-ui.table>
+            <x-slot name="head">
+                <x-ui.th>Projeto</x-ui.th>
+                <x-ui.th>Cliente</x-ui.th>
+                <x-ui.th>Status</x-ui.th>
+                <x-ui.th>Responsável</x-ui.th>
+                <x-ui.th>Orçamento</x-ui.th>
+            </x-slot>
+            @forelse($projetos as $projeto)
+                <x-ui.tr>
+                    <x-ui.td><a href="{{ route('projetos.show', $projeto) }}" class="font-medium text-primary-700 hover:underline dark:text-primary-300">{{ $projeto->name }}</a></x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $projeto->client->name ?? '-' }}</x-ui.td>
+                    <x-ui.td><x-ui.badge>{{ $projeto->status }}</x-ui.badge></x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $projeto->owner->name ?? '-' }}</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">R$ {{ number_format($projeto->budget, 2, ',', '.') }}</x-ui.td>
+                </x-ui.tr>
+            @empty
+                <x-ui.empty-state title="Nenhum projeto" description="Crie um novo projeto para começar." />
+            @endforelse
+        </x-ui.table>
+    </x-ui.card>
     <div class="mt-4">{{ $projetos->links() }}</div>
 @endsection
