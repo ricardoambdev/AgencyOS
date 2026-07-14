@@ -122,22 +122,55 @@ html.dark .brand-text { color: var(--brand); }
 }
 
 /* ============================================================
-   Fallback de dark mode para views legadas (gray-*/bg-white)
-   Mantido apenas durante a transição — remover ao final.
+   Dark theme + base de formulários (Design System)
+   Mapeamento semântico de utilitários legados (gray-*/bg-white/
+   shadow) para os tokens do Design System, e estilo base para
+   controles de formulário e tabelas nativos. Garante consistência
+   e modo escuro em TODAS as views sem recurso a !important.
+   As classes do Design System (x-ui.*) têm prioridade pois aqui
+   usamos :where() de baixíssima especificidade.
    ============================================================ */
-html.dark .bg-white,
-html.dark .bg-gray-50,
-html.dark .bg-gray-100 { background-color: var(--surface) !important; color: var(--text) !important; }
-html.dark .text-gray-800,
-html.dark .text-gray-700 { color: var(--text) !important; }
-html.dark .text-gray-600,
-html.dark .text-gray-500,
-html.dark .text-gray-400 { color: var(--text-muted) !important; }
-html.dark .border-gray-200,
-html.dark .border-gray-300 { border-color: var(--border) !important; }
-html.dark input,
-html.dark textarea,
-html.dark select { background-color: var(--surface-2) !important; color: var(--text) !important; border-color: var(--border) !important; }
-html.dark .shadow,
-html.dark .shadow-sm,
-html.dark .shadow-md { box-shadow: 0 1px 2px rgba(0,0,0,.2) !important; }
+:where(html.dark) .bg-white,
+:where(html.dark) .bg-gray-50,
+:where(html.dark) .bg-gray-100 { background-color: var(--surface); }
+:where(html.dark) .text-gray-800,
+:where(html.dark) .text-gray-700 { color: var(--text); }
+:where(html.dark) .text-gray-600,
+:where(html.dark) .text-gray-500,
+:where(html.dark) .text-gray-400 { color: var(--text-muted); }
+:where(html.dark) .border-gray-200,
+:where(html.dark) .border-gray-300 { border-color: var(--border); }
+:where(html.dark) .shadow,
+:where(html.dark) .shadow-sm,
+:where(html.dark) .shadow-md,
+:where(html.dark) .shadow-lg { box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+
+/* Controles de formulário nativos com tokens do DS */
+:where(input, textarea, select) {
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--text);
+}
+:where(html.dark) :where(input, textarea, select) {
+    background-color: var(--surface-2);
+}
+:where(input, textarea, select):focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+:where(input, textarea, select):disabled { opacity: .6; cursor: not-allowed; }
+
+/* Tabelas base (x-ui.table sobrepõe quando presente) */
+:where(table) { width: 100%; border-collapse: collapse; }
+:where(table) :where(th) {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+:where(table) :where(td, th) { padding: .65rem .85rem; border-bottom: 1px solid var(--border); }
+:where(table) :where(tbody tr:hover) { background-color: var(--surface-2); }

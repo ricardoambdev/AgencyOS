@@ -1,52 +1,50 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">CRM &middot; Leads</h1>
-        <a href="{{ route('leads.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Novo Lead</a>
-        <a href="{{ route('leads.import') }}" class="text-indigo-600 px-3 py-2 text-sm hover:underline">Importar</a>
-        <a href="{{ route('leads.export') }}" class="text-indigo-600 px-3 py-2 text-sm hover:underline">Exportar</a>
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-app">CRM &middot; Leads</h1>
+            <p class="text-sm text-muted">Gerencie seus leads e oportunidades.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('leads.import') }}" class="text-sm text-primary-700 hover:underline dark:text-primary-300">Importar</a>
+            <a href="{{ route('leads.export') }}" class="text-sm text-primary-700 hover:underline dark:text-primary-300">Exportar</a>
+            <x-ui.button href="{{ route('leads.create') }}" icon="plus">Novo Lead</x-ui.button>
+        </div>
     </div>
 
     <form method="GET" class="mb-4 flex items-center gap-2">
-        <label class="text-sm text-gray-600">Status</label>
-        <select name="status" onchange="this.form.submit()" class="rounded-md border border-gray-300 px-2 py-1 text-sm">
-            <option value="">Todos</option>
-            @foreach($statuses as $k => $v)
-                <option value="{{ $k }}" {{ request('status') == $k ? 'selected' : '' }}>{{ $v }}</option>
-            @endforeach
-        </select>
+        <label class="text-sm text-muted">Status</label>
+        <x-ui.select name="status" :options="['' => 'Todos'] + $statuses" :selected="request('status')" onchange="this.form.submit()" class="w-auto" />
     </form>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nome</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Empresa</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Responsável</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($leads as $lead)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4"><a href="{{ route('leads.show', $lead) }}" class="text-indigo-600 font-medium">{{ $lead->name }}</a>
-                        <div class="text-xs text-gray-500">{{ $lead->email }}</div></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $lead->company_name }}</td>
-                    <td class="px-6 py-4">@include('partials.status-badge', ['entityType' => \App\Domains\Crm\Models\Lead::class, 'status' => $lead->status])</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $lead->owner->name ?? '-' }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">R$ {{ number_format($lead->value, 2, ',', '.') }}</td>
-                    <td class="px-6 py-4 text-right text-sm">
-                        <a href="{{ route('leads.edit', $lead) }}" class="text-indigo-600">Editar</a>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Nenhum lead encontrado.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <x-ui.card>
+        <x-ui.table>
+            <x-slot name="head">
+                <x-ui.th>Nome</x-ui.th>
+                <x-ui.th>Empresa</x-ui.th>
+                <x-ui.th>Status</x-ui.th>
+                <x-ui.th>Responsável</x-ui.th>
+                <x-ui.th>Valor</x-ui.th>
+                <x-ui.th class="text-right">Ações</x-ui.th>
+            </x-slot>
+            @forelse($leads as $lead)
+                <x-ui.tr>
+                    <x-ui.td>
+                        <a href="{{ route('leads.show', $lead) }}" class="font-medium text-primary-700 hover:underline dark:text-primary-300">{{ $lead->name }}</a>
+                        <div class="text-xs text-muted">{{ $lead->email }}</div>
+                    </x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $lead->company_name }}</x-ui.td>
+                    <x-ui.td>@include('partials.status-badge', ['entityType' => \App\Domains\Crm\Models\Lead::class, 'status' => $lead->status])</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $lead->owner->name ?? '-' }}</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">R$ {{ number_format($lead->value, 2, ',', '.') }}</x-ui.td>
+                    <x-ui.td class="text-right text-sm">
+                        <a href="{{ route('leads.edit', $lead) }}" class="text-primary-700 hover:underline dark:text-primary-300">Editar</a>
+                    </x-ui.td>
+                </x-ui.tr>
+            @empty
+                <x-ui.empty-state title="Nenhum lead encontrado" description="Crie um novo lead para começar." />
+            @endforelse
+        </x-ui.table>
+    </x-ui.card>
     <div class="mt-4">{{ $leads->links() }}</div>
 @endsection
