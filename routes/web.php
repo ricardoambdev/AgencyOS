@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Controllers\CommentController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Domains\Agenda\Controllers\EventoController;
 use App\Domains\Crm\Controllers\LeadController;
 use App\Domains\Cliente\Controllers\ClienteController;
@@ -124,4 +125,20 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::post('/{token}/comment', [PortalController::class, 'comment'])->name('comment');
     Route::post('/{token}/approve', [PortalController::class, 'approve'])->name('approve');
     Route::get('/{token}/download/{attachment}', [PortalController::class, 'download'])->name('download');
+});
+
+// Painel administrativo (AdminJS-style, nativo Laravel)
+Route::middleware(['auth', 'admin.access'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('{resource}/export', [AdminController::class, 'export'])->name('resource.export');
+    Route::get('{resource}/import', [AdminController::class, 'import'])->name('resource.import');
+    Route::post('{resource}/import', [AdminController::class, 'importStore'])->name('resource.import.store');
+    Route::get('{resource}/create', [AdminController::class, 'create'])->name('resource.create');
+    Route::post('{resource}', [AdminController::class, 'store'])->name('resource.store');
+    Route::get('{resource}', [AdminController::class, 'index'])->name('resource.index');
+    Route::get('{resource}/{id}/edit', [AdminController::class, 'edit'])->name('resource.edit');
+    Route::get('{resource}/{id}', [AdminController::class, 'show'])->name('resource.show');
+    Route::put('{resource}/{id}', [AdminController::class, 'update'])->name('resource.update');
+    Route::delete('{resource}/{id}', [AdminController::class, 'destroy'])->name('resource.destroy');
 });

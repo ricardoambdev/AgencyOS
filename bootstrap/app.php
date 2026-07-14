@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetActiveCompany::class,
         ]);
+
+        $middleware->alias([
+            'admin.access' => \App\Http\Middleware\AdminAccess::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
