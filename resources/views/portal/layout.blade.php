@@ -6,16 +6,25 @@
     <title>@yield('title', 'Portal do Cliente') · AgencyOS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { 500: '#4f46e5', 600: '#4338ca' } } } } };
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: {
+            primary: {
+                50:'#F6FFF2',100:'#D9FAC9',200:'#D1FAB8',300:'#C2F269',400:'#BDF04D',
+                500:'#A3D825',600:'#8EC91F',700:'#73A61A',800:'#5A7F16',900:'#3E5910'
+            },
+            neutral: {
+                50:'#FFFFFF',100:'#F6FFF2',200:'#E8F2E3',300:'#D5DDD1',400:'#B5CBAA',
+                500:'#9BAA94',600:'#7D8479',700:'#5F645C',800:'#4E514C',900:'#2E312D'
+            }
+        } } } };
         if (localStorage.theme === 'dark') document.documentElement.classList.add('dark');
     </script>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen">
-    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+<body class="bg-neutral-50 dark:bg-neutral-900 text-neutral-800 dark:text-neutral-100 min-h-screen">
+    <header class="bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
         <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-            <span class="font-bold text-lg">AgencyOS <span class="text-brand-500">· Área do Cliente</span></span>
+            <span class="font-bold text-lg">AgencyOS <span class="text-primary-600">· Área do Cliente</span></span>
             @isset($cliente)
-                <span class="text-sm text-slate-500 dark:text-slate-400">{{ $cliente->name }}</span>
+                <span class="text-sm text-neutral-500 dark:text-neutral-400">{{ $cliente->name }}</span>
             @endisset
         </div>
     </header>
@@ -30,7 +39,7 @@
         @yield('content')
     </main>
 
-    <footer class="max-w-4xl mx-auto px-6 py-8 text-center text-xs text-slate-400">
+    <footer class="max-w-4xl mx-auto px-6 py-8 text-center text-xs text-neutral-400">
         Acesso seguro via link exclusivo. Não compartilhe este endereço.
     </footer>
 </body>
