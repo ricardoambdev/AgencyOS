@@ -29,6 +29,8 @@ class MiscPagesTest extends TestCase
         $this->actingAs($user)->get('/notifications')->assertStatus(200);
         $this->actingAs($user)->get('/search?q=teste')->assertStatus(200);
         $this->actingAs($user)->get('/relatorios')->assertStatus(200);
+        $this->actingAs($user)->get(route('leads.import'))->assertStatus(200);
+        $this->actingAs($user)->get(route('dashboard.customize'))->assertStatus(200);
     }
 
     public function test_portal_dashboard_renders(): void

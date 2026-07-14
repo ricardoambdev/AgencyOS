@@ -9,6 +9,6 @@
         </span>
     </div>
     <div class="w-full h-2.5 bg-[var(--surface-2)] rounded-full overflow-hidden">
-        <div class="h-full bg-indigo-500" style="width: {{ $pct ?? 0 }}%"></div>
+        <div class="h-full bg-[var(--brand)]" style="width: {{ $pct ?? 0 }}%"></div>
     </div>
 </div>

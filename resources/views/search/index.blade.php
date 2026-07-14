@@ -2,7 +2,7 @@
 @section('content')
     <h1 class="text-2xl font-bold text-[var(--text)] mb-6">Pesquisa Global</h1>
     <form method="GET" action="{{ route('search.index') }}" class="mb-6">
-        <input type="text" name="q" value="{{ $term }}" placeholder="Digite para pesquisar..." class="w-full rounded-md border border-gray-300 px-4 py-2" autofocus>
+        <input type="text" name="q" value="{{ $term }}" placeholder="Digite para pesquisar..." class="w-full rounded-md border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-[var(--text)]" autofocus>
     </form>
     @if($term)
         @forelse($results as $type => $items)
