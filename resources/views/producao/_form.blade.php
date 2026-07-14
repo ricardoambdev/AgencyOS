@@ -4,67 +4,41 @@
 @endphp
 
 <div class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Projeto</label>
-        <select name="project_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
-            <option value="">Selecione</option>
-                @foreach($projetos as $p)
-                    <option value="{{ $p->id }}" {{ old('project_id', optional($entregavel)->project_id) == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
-                @endforeach
-        </select>
+    <x-ui.field label="Projeto" name="project_id" required>
+        <x-ui.select name="project_id" :options="['' => 'Selecione'] + $projetos->pluck('name', 'id')->toArray()" :selected="old('project_id', optional($entregavel)->project_id)" />
+    </x-ui.field>
+
+    <x-ui.field label="Nome do entregável" name="name" required>
+        <x-ui.input name="name" :value="old('name', optional($entregavel)->name)" />
+    </x-ui.field>
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <x-ui.field label="Tipo" name="type">
+            <x-ui.select name="type" :options="$tipos" :selected="old('type', optional($entregavel)->type ?? 'outro')" />
+        </x-ui.field>
+        <x-ui.field label="Status" name="status">
+            <x-ui.select name="status" :options="$status" :selected="old('status', optional($entregavel)->status ?? 'briefing')" />
+        </x-ui.field>
+        <x-ui.field label="Responsável" name="owner_id">
+            <x-ui.select name="owner_id" :options="['' => '—'] + $owners->pluck('name', 'id')->toArray()" :selected="old('owner_id', optional($entregavel)->owner_id)" />
+        </x-ui.field>
     </div>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Nome do entregável</label>
-            <input type="text" name="name" value="{{ old('name', optional($entregavel)->name) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
-    </div>
+    <x-ui.field label="Data de entrega" name="due_date">
+        <x-ui.input type="date" name="due_date" :value="old('due_date', optional(optional($entregavel)->due_date)->format('Y-m-d'))" />
+    </x-ui.field>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Tipo</label>
-            <select name="type" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach($tipos as $k => $l)
-                    <option value="{{ $k }}" {{ old('type', optional($entregavel)->type ?? 'outro') == $k ? 'selected' : '' }}>{{ $l }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Status</label>
-            <select name="status" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                @foreach($status as $k => $l)
-                    <option value="{{ $k }}" {{ old('status', optional($entregavel)->status ?? 'briefing') == $k ? 'selected' : '' }}>{{ $l }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700">Responsável</label>
-            <select name="owner_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                <option value="">—</option>
-                @foreach($owners as $o)
-                    <option value="{{ $o->id }}" {{ old('owner_id', optional($entregavel)->owner_id) == $o->id ? 'selected' : '' }}>{{ $o->name }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
+    <x-ui.field label="Descrição / Briefing" name="description">
+        <x-ui.textarea name="description" :value="old('description', optional($entregavel)->description)" rows="4" />
+    </x-ui.field>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Data de entrega</label>
-        <input type="date" name="due_date" value="{{ old('due_date', optional(optional($entregavel)->due_date)->format('Y-m-d')) }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-    </div>
-
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Descrição / Briefing</label>
-        <textarea name="description" rows="4" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">{{ old('description', optional($entregavel)->description) }}</textarea>
-    </div>
-
-    <label class="flex items-center gap-2 text-sm text-gray-700">
-        <input type="checkbox" name="client_visible" value="1" {{ old('client_visible', optional($entregavel)->client_visible) ? 'checked' : '' }}>
+    <label class="flex items-center gap-2 text-sm text-app">
+        <input type="checkbox" name="client_visible" value="1" {{ old('client_visible', optional($entregavel)->client_visible) ? 'checked' : '' }} class="h-4 w-4 rounded border-border text-brand focus:ring-[var(--ring)]">
         Visível no Portal do Cliente
     </label>
 
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Anexos</label>
-        <input type="file" name="files[]" multiple class="mt-1 w-full text-sm">
-        <p class="text-xs text-gray-400 mt-1">Opcionais. Até 10MB por arquivo.</p>
-    </div>
+    <x-ui.field label="Anexos" name="files">
+        <input type="file" name="files[]" multiple class="mt-1 w-full text-sm text-app">
+        <p class="mt-1 text-xs text-muted">Opcionais. Até 10MB por arquivo.</p>
+    </x-ui.field>
 </div>

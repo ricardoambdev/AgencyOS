@@ -1,70 +1,70 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-            <a href="{{ route('producao.index') }}" class="text-sm text-indigo-600">&larr; Produção</a>
-            <h1 class="text-2xl font-bold text-gray-800">{{ $entregavel->name }} <span class="text-base font-normal text-gray-400">v{{ $entregavel->version }}</span></h1>
-            <p class="text-sm text-gray-500">{{ $entregavel->projeto->name ?? '' }} &middot; {{ App\Domains\Producao\Controllers\EntregavelController::tipos()[$entregavel->type] ?? $entregavel->type }}</p>
+            <a href="{{ route('producao.index') }}" class="text-sm text-primary-700 hover:underline dark:text-primary-300">&larr; Produção</a>
+            <h1 class="text-2xl font-bold tracking-tight text-app">{{ $entregavel->name }} <span class="text-base font-normal text-muted">v{{ $entregavel->version }}</span></h1>
+            <p class="text-sm text-muted">{{ $entregavel->projeto->name ?? '' }} &middot; {{ App\Domains\Producao\Controllers\EntregavelController::tipos()[$entregavel->type] ?? $entregavel->type }}</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap items-center gap-2">
             @if($entregavel->status !== 'aprovado' && $entregavel->status !== 'entregue')
                 <form method="POST" action="{{ route('producao.aprovar', ['entregavel' => $entregavel]) }}">@csrf
-                    <button class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700">Aprovar</button>
+                    <x-ui.button type="submit" variant="success" icon="check">Aprovar</x-ui.button>
                 </form>
             @endif
             @if($entregavel->status !== 'entregue')
                 <form method="POST" action="{{ route('producao.aprovar', ['entregavel' => $entregavel]) }}">@csrf<input type="hidden" name="deliver" value="1">
-                    <button class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">Marcar entregue</button>
+                    <x-ui.button type="submit" variant="info" icon="send">Marcar entregue</x-ui.button>
                 </form>
             @endif
             <form method="POST" action="{{ route('producao.nova-versao', ['entregavel' => $entregavel]) }}">@csrf
-                <button class="bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700">Nova versão</button>
+                <x-ui.button type="submit" variant="neutral" icon="copy">Nova versão</x-ui.button>
             </form>
-            <a href="{{ route('producao.edit', $entregavel) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Editar</a>
+            <x-ui.button href="{{ route('producao.edit', $entregavel) }}" icon="pencil">Editar</x-ui.button>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Anexos</h3>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="space-y-6 lg:col-span-2">
+            <x-ui.card>
+                <h3 class="mb-3 font-semibold text-app">Anexos</h3>
                 <div class="space-y-2">
                     @forelse($entregavel->attachments as $a)
-                        <div class="flex items-center justify-between border rounded-md px-3 py-2">
-                            <span class="text-sm">{{ $a->name }} <span class="text-xs text-gray-400">({{ number_format($a->size/1024, 1) }} KB)</span></span>
-                            <a href="{{ route('producao.attachments.download', ['attachment' => $a]) }}" class="text-indigo-600 text-sm">Baixar</a>
+                        <div class="flex items-center justify-between rounded-lg border border-border px-3 py-2">
+                            <span class="text-sm text-app">{{ $a->name }} <span class="text-xs text-muted">({{ number_format($a->size/1024, 1) }} KB)</span></span>
+                            <a href="{{ route('producao.attachments.download', ['attachment' => $a]) }}" class="text-sm text-primary-700 hover:underline dark:text-primary-300">Baixar</a>
                         </div>
                     @empty
-                        <p class="text-sm text-gray-400">Nenhum anexo.</p>
+                        <p class="text-sm text-muted">Nenhum anexo.</p>
                     @endforelse
                 </div>
-            </div>
+            </x-ui.card>
 
             @if($entregavel->description)
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Briefing / Descrição</h3>
-                <p class="text-sm text-gray-600 whitespace-pre-line">{{ $entregavel->description }}</p>
-            </div>
+            <x-ui.card>
+                <h3 class="mb-3 font-semibold text-app">Briefing / Descrição</h3>
+                <p class="whitespace-pre-line text-sm text-muted">{{ $entregavel->description }}</p>
+            </x-ui.card>
             @endif
 
-            <div class="bg-white shadow rounded-lg p-6">
+            <x-ui.card>
                 @include('partials.comments', ['model' => $entregavel])
-            </div>
+            </x-ui.card>
         </div>
 
         <div class="space-y-6">
-            <div class="bg-white shadow rounded-lg p-6">
+            <x-ui.card>
                 <dl class="space-y-2 text-sm">
-                    <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd>{{ $statusOptions[$entregavel->status] ?? $entregavel->status }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Responsável</dt><dd>{{ $entregavel->owner->name ?? '-' }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Entrega</dt><dd>{{ $entregavel->due_date?->format('d/m/Y') ?? '-' }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Versão</dt><dd>v{{ $entregavel->version }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Portal</dt><dd>{{ $entregavel->client_visible ? 'Visível' : 'Oculto' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Status</dt><dd class="text-app">{{ $statusOptions[$entregavel->status] ?? $entregavel->status }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Responsável</dt><dd class="text-app">{{ $entregavel->owner->name ?? '-' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Entrega</dt><dd class="text-app">{{ $entregavel->due_date?->format('d/m/Y') ?? '-' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Versão</dt><dd class="text-app">v{{ $entregavel->version }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Portal</dt><dd class="text-app">{{ $entregavel->client_visible ? 'Visível' : 'Oculto' }}</dd></div>
                 </dl>
-            </div>
-            <div class="bg-white shadow rounded-lg p-6">
+            </x-ui.card>
+            <x-ui.card>
                 @include('partials.timeline', ['model' => $entregavel])
-            </div>
+            </x-ui.card>
         </div>
     </div>
 @endsection
