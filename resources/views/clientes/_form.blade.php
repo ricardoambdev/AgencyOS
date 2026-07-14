@@ -1,30 +1,33 @@
 <div class="space-y-4">
-    <div>
-        <label class="block text-sm font-medium text-gray-700">Nome *</label>
-        <input type="text" name="name" value="{{ old('name', $cliente->name ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" required>
+    <x-ui.field label="Nome" name="name" required>
+        <x-ui.input name="name" :value="old('name', $cliente->name ?? '')" />
+    </x-ui.field>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <x-ui.field label="E-mail" name="email">
+            <x-ui.input name="email" type="email" :value="old('email', $cliente->email ?? '')" />
+        </x-ui.field>
+        <x-ui.field label="Telefone" name="phone">
+            <x-ui.input name="phone" :value="old('phone', $cliente->phone ?? '')" />
+        </x-ui.field>
     </div>
-    <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-sm font-medium text-gray-700">E-mail</label>
-            <input type="email" name="email" value="{{ old('email', $cliente->email ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-        <div><label class="block text-sm font-medium text-gray-700">Telefone</label>
-            <input type="text" name="phone" value="{{ old('phone', $cliente->phone ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <x-ui.field label="Documento (CNPJ/CPF)" name="document">
+            <x-ui.input name="document" :value="old('document', $cliente->document ?? '')" />
+        </x-ui.field>
+        <x-ui.field label="Tipo" name="type">
+            <x-ui.select name="type" :options="['company' => 'Empresa', 'person' => 'Pessoa']" :selected="old('type', $cliente->type ?? 'company')" />
+        </x-ui.field>
     </div>
-    <div class="grid grid-cols-2 gap-4">
-        <div><label class="block text-sm font-medium text-gray-700">Documento (CNPJ/CPF)</label>
-            <input type="text" name="document" value="{{ old('document', $cliente->document ?? '') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"></div>
-        <div><label class="block text-sm font-medium text-gray-700">Tipo</label>
-            <select name="type" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-                <option value="company" {{ ($cliente->type ?? 'company') == 'company' ? 'selected' : '' }}>Empresa</option>
-                <option value="person" {{ ($cliente->type ?? '') == 'person' ? 'selected' : '' }}>Pessoa</option>
-            </select></div>
-    </div>
-    <div><label class="block text-sm font-medium text-gray-700">Responsável</label>
-        <select name="owner_id" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
-            <option value="">-</option>
-            @foreach($owners as $o)<option value="{{ $o->id }}" {{ ($cliente->owner_id ?? '') == $o->id ? 'selected' : '' }}>{{ $o->name }}</option>@endforeach
-        </select></div>
-    <div><label class="block text-sm font-medium text-gray-700">Endereço</label>
-        <textarea name="address" rows="2" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">{{ old('address', $cliente->address ?? '') }}</textarea></div>
+
+    <x-ui.field label="Responsável" name="owner_id">
+        <x-ui.select name="owner_id" :options="['' => '-'] + $owners->pluck('name', 'id')->toArray()" :selected="old('owner_id', $cliente->owner_id ?? '')" />
+    </x-ui.field>
+
+    <x-ui.field label="Endereço" name="address">
+        <x-ui.textarea name="address" :value="old('address', $cliente->address ?? '')" rows="2" />
+    </x-ui.field>
 
     @include('partials.tags-input', ['model' => $cliente ?? null])
 </div>

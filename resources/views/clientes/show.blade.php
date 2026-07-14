@@ -1,33 +1,32 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-            <a href="{{ route('clientes.index') }}" class="text-sm text-indigo-600">&larr; Clientes</a>
-            <h1 class="text-2xl font-bold text-gray-800">{{ $cliente->name }}</h1>
+            <a href="{{ route('clientes.index') }}" class="text-sm text-primary-700 hover:underline dark:text-primary-300">&larr; Clientes</a>
+            <h1 class="text-2xl font-bold tracking-tight text-app">{{ $cliente->name }}</h1>
         </div>
-        <div class="space-x-2">
-            <a href="{{ route('clientes.edit', $cliente) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Editar</a>
-            <button type="button" onclick="navigator.clipboard.writeText('{{ $cliente->portalUrl() }}')"
-                    class="bg-emerald-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-emerald-700">Copiar link do portal</button>
+        <div class="flex items-center gap-2">
+            <x-ui.button href="{{ route('clientes.edit', $cliente) }}" icon="pencil">Editar</x-ui.button>
+            <x-ui.button variant="success" icon="link" onclick="navigator.clipboard.writeText('{{ $cliente->portalUrl() }}')">Copiar link do portal</x-ui.button>
         </div>
     </div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Projetos</h3>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="space-y-6 lg:col-span-2">
+            <x-ui.card>
+                <h3 class="mb-3 font-semibold text-app">Projetos</h3>
                 @forelse($cliente->projetos as $p)
-                    <a href="{{ route('projetos.show', $p) }}" class="block border-b py-2 text-indigo-600">{{ $p->name }} <span class="text-xs text-gray-500">- {{ $p->status }}</span></a>
+                    <a href="{{ route('projetos.show', $p) }}" class="block border-b border-app py-2 text-primary-700 hover:underline dark:text-primary-300">{{ $p->name }} <span class="text-xs text-muted">- {{ $p->status }}</span></a>
                 @empty
-                    <p class="text-sm text-gray-400">Nenhum projeto.</p>
+                    <p class="text-sm text-muted">Nenhum projeto.</p>
                 @endforelse
-            </div>
-            <div class="bg-white shadow rounded-lg p-6">
+            </x-ui.card>
+            <x-ui.card>
                 @include('partials.comments', ['model' => $cliente])
                 @include('partials.entity-activity', ['model' => $cliente])
-            </div>
+            </x-ui.card>
         </div>
-        <div class="bg-white shadow rounded-lg p-6">
+        <x-ui.card>
             @include('partials.timeline', ['model' => $cliente])
-        </div>
+        </x-ui.card>
     </div>
 @endsection
