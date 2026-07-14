@@ -1,56 +1,49 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Equipamentos</h1>
-        <a href="{{ route('equipamentos.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Novo Equipamento</a>
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-app">Equipamentos</h1>
+            <p class="text-sm text-muted">Controle de equipamentos e ativos.</p>
+        </div>
+        <x-ui.button href="{{ route('equipamentos.create') }}" icon="plus">Novo Equipamento</x-ui.button>
     </div>
 
-    <form method="GET" class="bg-white shadow rounded-lg p-4 mb-4 flex flex-wrap gap-3 items-end">
-        <div>
-            <label class="block text-xs font-medium text-gray-500">Tipo</label>
-            <select name="type" onchange="this.form.submit()" class="mt-1 rounded-md border border-gray-300 px-2 py-1 text-sm">
-                <option value="">Todos</option>
-                @foreach(App\Domains\Equipamento\Controllers\EquipamentoController::tipos() as $k=>$l)<option value="{{ $k }}" {{ request('type') == $k ? 'selected' : '' }}>{{ $l }}</option>@endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-xs font-medium text-gray-500">Status</label>
-            <select name="status" onchange="this.form.submit()" class="mt-1 rounded-md border border-gray-300 px-2 py-1 text-sm">
-                <option value="">Todos</option>
-                @foreach(App\Domains\Equipamento\Controllers\EquipamentoController::status() as $k=>$l)<option value="{{ $k }}" {{ request('status') == $k ? 'selected' : '' }}>{{ $l }}</option>@endforeach
-            </select>
-        </div>
-        <div>
-            <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar..." class="mt-1 rounded-md border border-gray-300 px-2 py-1 text-sm">
-        </div>
-        <button class="bg-gray-700 text-white px-3 py-2 rounded-md text-sm">Filtrar</button>
-    </form>
+    <x-ui.card>
+        <form method="GET" class="flex flex-wrap items-end gap-3">
+            <x-ui.field label="Tipo" name="type" inline>
+                <x-ui.select name="type" :options="['' => 'Todos'] + App\Domains\Equipamento\Controllers\EquipamentoController::tipos()" :selected="request('type')" onchange="this.form.submit()" class="w-auto" />
+            </x-ui.field>
+            <x-ui.field label="Status" name="status" inline>
+                <x-ui.select name="status" :options="['' => 'Todos'] + App\Domains\Equipamento\Controllers\EquipamentoController::status()" :selected="request('status')" onchange="this.form.submit()" class="w-auto" />
+            </x-ui.field>
+            <x-ui.field label="Buscar" name="q" inline>
+                <x-ui.input type="text" name="q" :value="request('q')" placeholder="Buscar..." class="w-auto" />
+            </x-ui.field>
+            <x-ui.button type="submit" icon="filter">Filtrar</x-ui.button>
+        </form>
+    </x-ui.card>
 
-    <div class="bg-white shadow rounded-lg overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipamento</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Responsável</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Série</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @forelse($equipamentos as $e)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4"><a href="{{ route('equipamentos.show', $e) }}" class="text-indigo-600 font-medium">{{ $e->name }}</a></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ App\Domains\Equipamento\Controllers\EquipamentoController::tipos()[$e->type] ?? $e->type }}</td>
-                    <td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">{{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$e->status] ?? $e->status }}</span></td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $e->owner->name ?? '-' }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $e->serial ?? '-' }}</td>
-                </tr>
-                @empty
-                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Nenhum equipamento.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <x-ui.card>
+        <x-ui.table>
+            <x-slot name="head">
+                <x-ui.th>Equipamento</x-ui.th>
+                <x-ui.th>Tipo</x-ui.th>
+                <x-ui.th>Status</x-ui.th>
+                <x-ui.th>Responsável</x-ui.th>
+                <x-ui.th>Série</x-ui.th>
+            </x-slot>
+            @forelse($equipamentos as $e)
+                <x-ui.tr>
+                    <x-ui.td><a href="{{ route('equipamentos.show', $e) }}" class="font-medium text-primary-700 hover:underline dark:text-primary-300">{{ $e->name }}</a></x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ App\Domains\Equipamento\Controllers\EquipamentoController::tipos()[$e->type] ?? $e->type }}</x-ui.td>
+                    <x-ui.td><x-ui.badge>{{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$e->status] ?? $e->status }}</x-ui.badge></x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $e->owner->name ?? '-' }}</x-ui.td>
+                    <x-ui.td class="text-sm text-muted">{{ $e->serial ?? '-' }}</x-ui.td>
+                </x-ui.tr>
+            @empty
+                <x-ui.empty-state title="Nenhum equipamento" description="Cadastre um novo equipamento para começar." />
+            @endforelse
+        </x-ui.table>
+    </x-ui.card>
     <div class="mt-4">{{ $equipamentos->links() }}</div>
 @endsection

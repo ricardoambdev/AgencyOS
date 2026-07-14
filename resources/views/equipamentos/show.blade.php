@@ -1,39 +1,39 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex justify-between items-center mb-6">
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-            <a href="{{ route('equipamentos.index') }}" class="text-sm text-indigo-600">&larr; Equipamentos</a>
-            <h1 class="text-2xl font-bold text-gray-800">{{ $equipamento->name }}</h1>
-            <p class="text-sm text-gray-500">{{ App\Domains\Equipamento\Controllers\EquipamentoController::tipos()[$equipamento->type] ?? $equipamento->type }} &middot; {{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$equipamento->status] ?? $equipamento->status }}</p>
+            <a href="{{ route('equipamentos.index') }}" class="text-sm text-primary-700 hover:underline dark:text-primary-300">&larr; Equipamentos</a>
+            <h1 class="text-2xl font-bold tracking-tight text-app">{{ $equipamento->name }}</h1>
+            <p class="text-sm text-muted">{{ App\Domains\Equipamento\Controllers\EquipamentoController::tipos()[$equipamento->type] ?? $equipamento->type }} &middot; {{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$equipamento->status] ?? $equipamento->status }}</p>
         </div>
-        <a href="{{ route('equipamentos.edit', $equipamento) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Editar</a>
+        <x-ui.button href="{{ route('equipamentos.edit', $equipamento) }}" icon="pencil">Editar</x-ui.button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div class="space-y-6 lg:col-span-2">
             @if($equipamento->description)
-            <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="font-semibold text-gray-700 mb-3">Descrição</h3>
-                <p class="text-sm text-gray-600 whitespace-pre-line">{{ $equipamento->description }}</p>
-            </div>
+            <x-ui.card>
+                <h3 class="mb-3 font-semibold text-app">Descrição</h3>
+                <p class="whitespace-pre-line text-sm text-muted">{{ $equipamento->description }}</p>
+            </x-ui.card>
             @endif
-            <div class="bg-white shadow rounded-lg p-6">
+            <x-ui.card>
                 @include('partials.comments', ['model' => $equipamento])
                 @include('partials.entity-activity', ['model' => $equipamento])
-            </div>
+            </x-ui.card>
         </div>
         <div class="space-y-6">
-            <div class="bg-white shadow rounded-lg p-6">
+            <x-ui.card>
                 <dl class="space-y-2 text-sm">
-                    <div class="flex justify-between"><dt class="text-gray-500">Status</dt><dd>{{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$equipamento->status] ?? $equipamento->status }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Responsável</dt><dd>{{ $equipamento->owner->name ?? '-' }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Nº série</dt><dd>{{ $equipamento->serial ?? '-' }}</dd></div>
-                    <div class="flex justify-between"><dt class="text-gray-500">Compra</dt><dd>{{ $equipamento->purchase_date?->format('d/m/Y') ?? '-' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Status</dt><dd class="text-app">{{ App\Domains\Equipamento\Controllers\EquipamentoController::status()[$equipamento->status] ?? $equipamento->status }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Responsável</dt><dd class="text-app">{{ $equipamento->owner->name ?? '-' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Nº série</dt><dd class="text-app">{{ $equipamento->serial ?? '-' }}</dd></div>
+                    <div class="flex justify-between"><dt class="text-muted">Compra</dt><dd class="text-app">{{ $equipamento->purchase_date?->format('d/m/Y') ?? '-' }}</dd></div>
                 </dl>
-            </div>
-            <div class="bg-white shadow rounded-lg p-6">
+            </x-ui.card>
+            <x-ui.card>
                 @include('partials.timeline', ['model' => $equipamento])
-            </div>
+            </x-ui.card>
         </div>
     </div>
 @endsection
